@@ -11,5 +11,5 @@ run_worker_first = ["/api/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "angra-academy-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "7290ba80-498f-47b0-8b02-965188eb98ea"
 migrations_dir = "migrations"
