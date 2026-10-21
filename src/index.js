@@ -13,7 +13,7 @@ async function verifySession(request, env) {
   const cookie = request.headers.get('Cookie') || '';
   const match = cookie.match(/(?:^|;\s*)school_admin_session=([^;]+)/);
   if (!match) return false;
-  try { const token = match[1]; const [payload, sig] = token.split('.'); if (!payload || !sig) return false; const expected = await hmac(env.SESSION_SECRET, payload); if (!equal(expected, fromB64url(sig))) return false; const data = JSON.parse(new TextDecoder().decode(fromB64url(payload))); return data.exp > Math.floor(Date.now() / 1000) && data.sub === env.ADMIN_USERNAME; } catch { return false; }
+  try { const token = match[1]; const [payload, sig] = token.split('.'); if (!payload || !sig) return false; const expected = await hmac(env.SESSION_SECRET, payload); if (!equal(expected, fromB64url(sig))) return false; const data = JSON.parse(new TextDecoder().decode(fromB64url(payload))); return data.exp > Math.floor(Date.now() / 1000) && data.sub === 'admin'; } catch { return false; }
 }
 function originAllowed(request) { const origin = request.headers.get('Origin'); return !!origin && origin === new URL(request.url).origin; }
 async function readJson(request) { const len = Number(request.headers.get('Content-Length') || 0); if (len > MAX_BODY) throw new Error('অনুরোধটি অনেক বড়।'); const text = await request.text(); if (text.length > MAX_BODY) throw new Error('অনুরোধটি অনেক বড়।'); return JSON.parse(text); }
@@ -28,13 +28,15 @@ async function handleApi(request, env) {
   if (method === 'POST' && path === '/api/login') {
     if (!originAllowed(request)) return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
     let body; try { body = await readJson(request); } catch { return json({ error: 'সঠিক তথ্য দিন।' }, 400); }
+    const configuredPassword = String(env.ADMIN_PASSWORD || '');
+    if (!configuredPassword || !env.SESSION_SECRET) return json({ error: 'অ্যাডমিন লগইন কনফিগারেশন সম্পূর্ণ নয়। Cloudflare Secrets পরীক্ষা করুন।' }, 503);
     const ip = request.headers.get('CF-Connecting-IP') || 'unknown'; const key = await ipKey(ip, env.SESSION_SECRET);
     if (await blocked(env, key)) return json({ error: 'অনেকবার ভুল চেষ্টা হয়েছে। ১৫ মিনিট পরে আবার চেষ্টা করুন।' }, 429);
-    const username = String(body.username || ''); const password = String(body.password || '');
-    const okUser = equal(encoder.encode(username), encoder.encode(env.ADMIN_USERNAME)); const okPass = equal(encoder.encode(password), encoder.encode(env.ADMIN_PASSWORD));
-    if (!okUser || !okPass) { await failLogin(env, key); return json({ error: 'ইউজারনেম বা পাসওয়ার্ড সঠিক নয়।' }, 401); }
+    const password = String(body.password || '');
+    const okPass = equal(encoder.encode(password), encoder.encode(configuredPassword));
+    if (!okPass) { await failLogin(env, key); return json({ error: 'পাসওয়ার্ড সঠিক নয়।' }, 401); }
     await clearLogin(env, key);
-    const payload = b64url(encoder.encode(JSON.stringify({ sub: env.ADMIN_USERNAME, exp: Math.floor(Date.now() / 1000) + SESSION_SECONDS, nonce: crypto.randomUUID() })));
+    const payload = b64url(encoder.encode(JSON.stringify({ sub: 'admin', exp: Math.floor(Date.now() / 1000) + SESSION_SECONDS, nonce: crypto.randomUUID() })));
     const token = payload + '.' + b64url(await hmac(env.SESSION_SECRET, payload));
     return json({ ok: true }, 200, { 'Set-Cookie': sessionCookie(token, SESSION_SECONDS) });
   }
