@@ -1,0 +1,4 @@
+# For local development only. Do not upload or commit real credentials.
+ADMIN_USERNAME = "change-this-admin-name"
+ADMIN_PASSWORD = "use-a-unique-password-at-least-16-characters-long"
+SESSION_SECRET = "replace-with-a-long-random-secret-at-least-32-characters"
