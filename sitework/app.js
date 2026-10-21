@@ -2,24 +2,18 @@ const menuBtn=document.getElementById('menuBtn'),nav=document.getElementById('na
 menuBtn?.addEventListener('click',()=>nav.classList.toggle('open'));
 document.getElementById('year').textContent=new Date().getFullYear();
 const noticeList=document.getElementById('noticeList');
+let savedNotices=[];
+try{
+  savedNotices=JSON.parse(localStorage.getItem('schoolDemoNotices')||'[]');
+  if(savedNotices.length && noticeList){noticeList.innerHTML=savedNotices.map(n=>`<article class="notice"><span class="date">${escapeText(n.date||'নোটিশ')}</span><h3>${escapeText(n.title)}</h3><p>${escapeText(n.body)}</p></article>`).join('')}
+}catch(e){}
 const tickerText=document.getElementById('tickerText');
 const tickerTrack=document.getElementById('tickerTrack');
-function escapeText(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function loadPublicNotices(){
-  if(!noticeList) return;
-  try{
-    const response=await fetch('/api/notices',{headers:{'Accept':'application/json'}});
-    if(!response.ok) throw new Error('notice fetch failed');
-    const notices=await response.json();
-    if(notices.length){
-      noticeList.innerHTML=notices.map(n=>`<article class="notice"><span class="date">${escapeText(n.date||'নোটিশ')}</span><h3>${escapeText(n.title)}</h3><p>${escapeText(n.body)}</p></article>`).join('');
-      if(tickerText){tickerText.textContent=notices.map(n=>[n.title,n.body].filter(Boolean).join(' — ')).join('　　 • 　　 ');tickerTrack?.classList.add('has-notice');}
-    }
-  }catch(e){
-    // API unavailable: keep the static welcome notice already present in the page.
-  }
+if(tickerText && savedNotices.length){
+  tickerText.textContent=savedNotices.map(n=>[n.title,n.body].filter(Boolean).join(' — ')).join('　　 • 　　 ');
+  tickerTrack?.classList.add('has-notice');
 }
-loadPublicNotices();
+function escapeText(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 document.getElementById('admissionForm')?.addEventListener('submit',e=>{e.preventDefault();document.getElementById('formMsg').textContent='এটি শুধু নমুনা ফরম। কোনো তথ্য সার্ভারে পাঠানো হয়নি। ভর্তি নিশ্চিত করতে স্কুল অফিসে যোগাযোগ করুন।';e.target.reset()});
 
 const teacherSearch=document.getElementById('teacherSearch');
