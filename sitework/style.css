@@ -216,3 +216,8 @@ img{max-width:100%;height:auto}
 .teacher-avatar[hidden] {
   display: none !important;
 }
+
+
+/* Teacher/student directory: match the site's light section background; remove dark banner styling */
+.teachers-section{background:#f7f9fb!important;padding-top:0}
+.teacher-content{padding-top:28px}
