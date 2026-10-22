@@ -212,6 +212,50 @@
     });
   }
 
+  // Homepage banner carousel: pull image URLs from admin-managed settings.
+  (async function initHeroBanners() {
+    const image = $('heroBannerImage');
+    if (!image) return;
+    const fallback = 'banner-academy.jpg';
+    let banners = [fallback];
+    try {
+      const response = await fetch('/api/settings/public', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+      if (response.ok) {
+        const settings = await response.json();
+        if (settings.hero_banners) {
+          const parsed = JSON.parse(settings.hero_banners);
+          if (Array.isArray(parsed) && parsed.length) {
+            banners = parsed.map(v => String(v || '').trim()).filter(v => /^(https?:\/\/|\/|\.\/)/i.test(v));
+            if (!banners.length) banners = [fallback];
+          }
+        }
+      }
+    } catch (_) { /* Use the bundled academy banner if settings are unavailable. */ }
+    let current = 0;
+    image.src = banners[0];
+    if (banners.length < 2) return;
+    window.setInterval(() => {
+      image.classList.remove('slide-in');
+      image.classList.add('slide-out');
+      window.setTimeout(() => {
+        current = (current + 1) % banners.length;
+        image.onload = () => {
+          image.classList.remove('slide-out');
+          image.classList.add('slide-in');
+          window.setTimeout(() => image.classList.remove('slide-in'), 450);
+          image.onload = null;
+        };
+        image.onerror = () => {
+          image.onerror = null;
+          image.src = fallback;
+          image.classList.remove('slide-out');
+          image.classList.add('slide-in');
+        };
+        image.src = banners[current];
+      }, 400);
+    }, 3000);
+  })();
+
   // Smooth scrolling for in-page links.
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {

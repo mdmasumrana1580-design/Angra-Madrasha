@@ -154,8 +154,13 @@ footer{background:linear-gradient(100deg,#042e2a,#06443c)}
 }
 
 /* Full-width academy banner image */
-.hero-banner{width:100%;margin:0;overflow:hidden;background:#e8f7f0;line-height:0}
-.hero-banner img{display:block;width:100%;height:auto;max-width:none;object-fit:contain}
+.hero-banner{width:100%;margin:0;overflow:hidden;background:#e8f7f0;line-height:0;position:relative}
+.hero-banner img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;transform:translateX(0);opacity:1}
+.hero-banner img.slide-out{animation:bannerOut .42s ease-in forwards}
+.hero-banner img.slide-in{animation:bannerIn .42s ease-out both}
+@keyframes bannerOut{to{transform:translateX(-100%);opacity:.75}}
+@keyframes bannerIn{from{transform:translateX(100%);opacity:.75}to{transform:translateX(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.hero-banner img.slide-out,.hero-banner img.slide-in{animation-duration:.01ms}}
 
 
 /* Scrolling notice ticker directly below the academy banner */

@@ -43,9 +43,9 @@
     <button class="quick" data-target="teachers" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">♟</span><span><b>শিক্ষক ব্যবস্থাপনা</b><small>যোগ, সম্পাদনা, মুছে ফেলা</small></span></button>
     <button class="quick" data-target="students" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">🎓</span><span><b>শিক্ষার্থী ব্যবস্থাপনা</b><small>তথ্য, শ্রেণি ও ছবি</small></span></button>
     <button class="quick" data-target="admissions" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5"><span class="qIcon">📝</span><span><b>ভর্তি ব্যবস্থাপনা</b><small>ভর্তি সংক্রান্ত তথ্য</small></span></button>
-    <button class="quick" data-target="fees" style="--c:#0ca99c;--bg:#effcfb;--border:#ccefeb"><span class="qIcon">৳</span><span><b>বেতন ও ফি</b><small>ফি ও হিসাব</small></span></button>
     <button class="quick" data-target="notices" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e8"><span class="qIcon">📢</span><span><b>নোটিশ বোর্ড</b><small>নোটিশ প্রকাশ ও মুছুন</small></span></button>
     <button class="quick" data-target="ticker-settings" style="--c:#d9273d;--bg:#fff2f3;--border:#f7d6db"><span class="qIcon">🔴</span><span><b>শিরোনাম সেটিংস</b><small>হোমপেজের লাল লেখা পরিবর্তন</small></span></button>
+    <button class="quick" data-target="banner-settings" style="--c:#0b7e70;--bg:#effbf8;--border:#cdeee5"><span class="qIcon">🖼️</span><span><b>ব্যানার ব্যবস্থাপনা</b><small>হোমপেজের ব্যানার যোগ/পরিবর্তন</small></span></button>
   </div></section>
   <div class="lower">
     <section class="panel section" id="notices"><div class="panelHead"><h3>📢 সাম্প্রতিক নোটিশ</h3><button class="btn light" id="reloadNotices">রিফ্রেশ ↻</button></div>
@@ -55,6 +55,9 @@
   </div>
   <section class="panel section" id="ticker-settings"><div class="panelHead"><h3>🔴 হোমপেজের লাল শিরোনাম</h3><small>নোটিশ আইকনের জায়গায় দেখাবে</small></div>
     <form id="tickerLabelForm"><div class="field"><label for="tickerLabelInput">লাল লেবেলের লেখা</label><input id="tickerLabelInput" maxlength="40" value="শিরোনাম" placeholder="শিরোনাম"></div><div class="field"><label for="tickerTextInput">চলমান শিরোনামের লেখা</label><textarea id="tickerTextInput" rows="3" maxlength="3000" placeholder="যে লেখাটি ডান দিক থেকে বামে চলবে তা লিখুন"></textarea></div><div class="actions"><button class="btn" type="submit">শিরোনাম সংরক্ষণ</button><button class="btn light" type="button" id="reloadTickerLabel">রিফ্রেশ</button></div></form><div class="status">এই চলমান লেখা নোটিশ বোর্ড থেকে আলাদা। এখানে লেখা পরিবর্তন করলে শুধু হোমপেজের লাল শিরোনামের পাশের চলমান লেখাটি বদলাবে; নোটিশ বোর্ড অপরিবর্তিত থাকবে।</div>
+  </section>
+  <section class="panel section" id="banner-settings"><div class="panelHead"><h3>🖼️ হোমপেজ ব্যানার ব্যবস্থাপনা</h3><small>প্রতি ৩ সেকেন্ডে ডান থেকে বামে স্লাইড করবে</small></div>
+    <form id="bannerForm"><div class="field"><label for="bannerUrlsInput">ব্যানারের ছবির লিংক (প্রতি লাইনে একটি)</label><textarea id="bannerUrlsInput" rows="5" maxlength="2800" placeholder="https://example.com/banner1.jpg&#10;https://example.com/banner2.jpg"></textarea><small>একাধিক ছবি দিতে প্রতিটি ছবির সরাসরি URL আলাদা লাইনে লিখুন। কোনো লাইন মুছে দিলে সেই ব্যানার বাদ যাবে। ছবির লিংক https:// দিয়ে শুরু হওয়া উচিত।</small></div><div class="actions"><button class="btn" type="submit">ব্যানার সংরক্ষণ করুন</button><button class="btn light" type="button" id="reloadBanners">রিফ্রেশ ↻</button></div><div id="bannerPreview" class="status">ব্যানারের লিংক লোড হচ্ছে…</div></form>
   </section>
   <section class="panel section" id="teachers"><div class="panelHead"><h3>♟ শিক্ষক ব্যবস্থাপনা</h3><small>শিক্ষকের তথ্য যোগ করুন</small></div><form id="teacherForm"><div class="formGrid"><div class="field"><label>শিক্ষকের নাম</label><input name="name" required placeholder="সম্পূর্ণ নাম"></div><div class="field"><label>পদবি</label><input name="role" placeholder="যেমন: প্রধান শিক্ষক"></div><div class="field"><label>বিষয়</label><input name="subject" placeholder="যেমন: নূরানী"></div><div class="field"><label>মোবাইল নম্বর</label><input name="phone" inputmode="tel" placeholder="01XXXXXXXXX"></div><div class="field"><label>ছবি (ঐচ্ছিক)</label><input name="photo" type="file" accept="image/*"></div></div><div class="actions"><button class="btn" type="submit">＋ শিক্ষক যোগ করুন</button></div></form><div id="teacherList"></div></section>
   <section class="panel section" id="students"><div class="panelHead"><h3>🎓 শিক্ষার্থী ব্যবস্থাপনা</h3><small>শিক্ষার্থীর তথ্য যোগ করুন</small></div><form id="studentForm"><div class="formGrid"><div class="field"><label>শিক্ষার্থীর নাম</label><input name="name" required placeholder="সম্পূর্ণ নাম"></div><div class="field"><label>শ্রেণি</label><input name="className" required placeholder="যেমন: নূরানী ১ম"></div><div class="field"><label>রোল নম্বর</label><input name="roll" placeholder="রোল"></div><div class="field"><label>অভিভাবকের নাম</label><input name="guardian" placeholder="অভিভাবকের নাম"></div><div class="field"><label>ছবি (ঐচ্ছিক)</label><input name="photo" type="file" accept="image/*"></div></div><div class="actions"><button class="btn" type="submit">＋ শিক্ষার্থী যোগ করুন</button></div></form><div id="studentList"></div></section>
@@ -77,6 +80,28 @@ $('#reloadNotices').onclick=loadNotices;
 async function loadTickerLabelSetting(){try{const d=await api('/api/settings');$('#tickerLabelInput').value=d.ticker_label||'শিরোনাম';$('#tickerTextInput').value=d.ticker_text||''}catch(e){toast('শিরোনাম সেটিংস লোড হয়নি: '+e.message)}}
 $('#tickerLabelForm').addEventListener('submit',async e=>{e.preventDefault();const value=$('#tickerLabelInput').value.trim()||'শিরোনাম';try{await api('/api/settings',{method:'PUT',body:JSON.stringify({ticker_label:value,ticker_text:$('#tickerTextInput').value.trim()})});toast('শিরোনাম সংরক্ষণ হয়েছে');}catch(err){toast('সংরক্ষণ হয়নি: '+err.message)}});
 $('#reloadTickerLabel').addEventListener('click',loadTickerLabelSetting);
+async function loadBannerSettings(){
+  try{
+    const d=await api('/api/settings');
+    let urls=[];
+    try{const parsed=JSON.parse(d.hero_banners||'[]');if(Array.isArray(parsed))urls=parsed}catch{}
+    $('#bannerUrlsInput').value=urls.join('\n');
+    const preview=$('#bannerPreview');
+    preview.innerHTML=urls.length?urls.map((u,i)=>`<div style="display:flex;gap:10px;align-items:center;margin:8px 0;overflow-wrap:anywhere"><b>${i+1}.</b><span>${esc(u)}</span></div>`).join(''):'এখনো কোনো ব্যানার লিংক সেট করা নেই। ডিফল্ট ব্যানার দেখা যাবে।';
+  }catch(e){toast('ব্যানার সেটিংস লোড হয়নি: '+e.message)}
+}
+$('#bannerForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const urls=$('#bannerUrlsInput').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(urls.some(u=>!(/^(https?:\/\/|\/|\.\/)/i.test(u)))){toast('প্রতিটি ব্যানারের সঠিক ছবির লিংক দিন।');return}
+  try{
+    await api('/api/settings',{method:'PUT',body:JSON.stringify({hero_banners:JSON.stringify(urls)})});
+    toast('ব্যানার সংরক্ষিত হয়েছে। ওয়েবসাইট রিফ্রেশ করুন।');
+    loadBannerSettings();
+  }catch(err){toast('ব্যানার সংরক্ষণ হয়নি: '+err.message)}
+});
+$('#reloadBanners').addEventListener('click',loadBannerSettings);
+
 function personForm(form,kind){form.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,fd=new FormData(f);const payload=new FormData();for(const [k,v] of fd.entries()){if(k==='className')payload.append('class_name',String(v).trim());else if(k==='role')payload.append('designation',String(v).trim());else if(k==='guardian')continue;else payload.append(k,v)}try{await api('/api/'+kind,{method:'POST',body:payload});f.reset();toast('তথ্য যোগ হয়েছে');loadPeople(kind)}catch(err){toast('সংরক্ষণ হয়নি: '+err.message)}})}
 function renderPeople(el,arr,kind){el.innerHTML=arr.length?arr.map(p=>`<article class="notice"><div class="noticeTitle">${esc(p.name||'নাম নেই')}</div>${p.photo_url?`<img src="${esc(p.photo_url)}" alt="ছবি" style="width:58px;height:58px;object-fit:cover;border-radius:12px">`:''}<p>${esc(p.designation||p.class_name||'')}${p.subject?' • বিষয়: '+esc(p.subject):''}${p.roll?' • রোল: '+esc(p.roll):''}${p.phone?' • '+esc(p.phone):''}</p><button class="btn red" type="button" data-del-person="${esc(p.id)}">মুছুন</button></article>`).join(''):'<div class="status">কোনো তথ্য পাওয়া যায়নি।</div>';el.onclick=async e=>{const b=e.target.closest('[data-del-person]');if(!b||!confirm('তথ্যটি মুছে ফেলবেন?'))return;try{await api('/api/'+kind+'/'+encodeURIComponent(b.dataset.delPerson),{method:'DELETE'});toast('তথ্য মুছে ফেলা হয়েছে');loadPeople(kind)}catch(err){toast('মুছতে সমস্যা: '+err.message)}}}
 async function loadPeople(kind){const teacher=kind==='teachers',el=$(teacher?'#teacherList':'#studentList');try{const d=await api('/api/'+kind);const arr=Array.isArray(d)?d:(d[kind]||d.items||[]);setCounts(kind,arr.length);renderPeople(el,arr,kind)}catch(e){setCounts(kind,'—');el.innerHTML=`<div class="status">${teacher?'শিক্ষক':'শিক্ষার্থী'} তালিকা লোড হয়নি: ${esc(e.message)}</div>`}}
@@ -93,7 +118,7 @@ $('#logoutBtn').onclick=async()=>{try{await api('/api/logout',{method:'POST',bod
 $('#refreshBtn').onclick=()=>{loadNotices();loadPeople('teachers');loadPeople('students');toast('তথ্য রিফ্রেশ করা হচ্ছে')};
 function tick(){const d=new Date();$('#clock').textContent=d.toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});$('#todayDate').textContent=d.toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}tick();setInterval(tick,30000);
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();$('#loginError').textContent='';try{await api('/api/login',{method:'POST',body:JSON.stringify({password:$('#loginPassword').value})});$('#loginGate').classList.add('hidden');await startAdmin()}catch(err){$('#loginError').textContent=err.message}});
-async function startAdmin(){try{await api('/api/session');$('#loginGate').classList.add('hidden');$('#serverLabel').textContent='সার্ভার সংযুক্ত';$('#connectionStatus').textContent='সার্ভার সংযোগ: সক্রিয়';await Promise.all([loadNotices(),loadPeople('teachers'),loadPeople('students'),loadAdmissions(),loadFees(),loadTickerLabelSetting()])}catch(e){$('#loginGate').classList.remove('hidden');$('#serverLabel').textContent='লগইন প্রয়োজন';$('#connectionStatus').textContent='লগইন করুন।';}}
+async function startAdmin(){try{await api('/api/session');$('#loginGate').classList.add('hidden');$('#serverLabel').textContent='সার্ভার সংযুক্ত';$('#connectionStatus').textContent='সার্ভার সংযোগ: সক্রিয়';await Promise.all([loadNotices(),loadPeople('teachers'),loadPeople('students'),loadAdmissions(),loadFees(),loadTickerLabelSetting(),loadBannerSettings()])}catch(e){$('#loginGate').classList.remove('hidden');$('#serverLabel').textContent='লগইন প্রয়োজন';$('#connectionStatus').textContent='লগইন করুন।';}}
 startAdmin();
 const sections=['home','teachers','students','fees','notices'];const links=[...document.querySelectorAll('.mobileNav a')];const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id))}),{rootMargin:'-20% 0px -65% 0px'});sections.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el)});
 </script></body></html>
