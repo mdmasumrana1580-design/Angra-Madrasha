@@ -251,5 +251,14 @@ img{max-width:100%;height:auto}
 .install-fab:active{transform:translateY(-50%) scale(.96)}
 .install-fab span{white-space:nowrap}
 @keyframes installGlow{0%,100%{box-shadow:0 0 0 1px #70f0ca44,0 0 9px #19cba166,0 5px 15px #003e3440}50%{box-shadow:0 0 0 2px #a1ffe1aa,0 0 17px #19cba1cc,0 5px 18px #003e344a}}
-@media(max-width:520px){.install-fab{right:72px;padding:7px 9px;font-size:10px;gap:4px}.brandrow{gap:10px}.brand h1{max-width:calc(100% - 4px)}}
+@media(max-width:520px){
+.install-fab{right:68px;top:calc(50% + 21px);transform:translateY(-50%);padding:4px 7px;font-size:8px;gap:3px;color:#ff9bc8;border-color:rgba(255,155,200,.8);background:linear-gradient(135deg,#075e54,#06473f);box-shadow:0 0 0 1px #ff8fc744,0 0 9px #ff62b57a,0 3px 9px #003e3440}
+.install-fab:active{transform:translateY(-50%) scale(.96)}
+.brandrow{gap:9px;padding-top:17px;padding-bottom:17px}
+.brand{flex:1;min-width:0}
+.brand h1{white-space:nowrap;max-width:100%;font-size:clamp(12px,3vw,20px);line-height:1.2;letter-spacing:-.6px}
+.brand p{white-space:nowrap;font-size:11px}
+}
+@media(min-width:521px) and (max-width:720px){.install-fab{top:calc(50% + 12px);color:#ff9bc8}.brand{flex:1;min-width:0}.brand h1{white-space:nowrap;font-size:clamp(15px,2.7vw,20px)}}
+
 @media(prefers-reduced-motion:reduce){.install-fab{animation:none}}
