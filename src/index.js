@@ -313,7 +313,7 @@ async function handleApi(request, env) {
       if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
     }
     if (path === '/api/settings/public' && method === 'GET') {
-      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key='ticker_label'").all();
+      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key IN ('ticker_label','ticker_text')").all();
       return json(Object.fromEntries(results.map(r => [r.key, r.value])));
     }
     if (path === '/api/admissions' && method === 'GET') {
