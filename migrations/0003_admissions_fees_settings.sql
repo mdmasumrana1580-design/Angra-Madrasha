@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS admissions (id INTEGER PRIMARY KEY AUTOINCREMENT, student_name TEXT NOT NULL DEFAULT '', guardian TEXT NOT NULL, phone TEXT NOT NULL, grade TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'নতুন', notes TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
+CREATE INDEX IF NOT EXISTS idx_admissions_created ON admissions(created_at DESC);
+CREATE TABLE IF NOT EXISTS fee_records (id INTEGER PRIMARY KEY AUTOINCREMENT, student_name TEXT NOT NULL, class_name TEXT NOT NULL DEFAULT '', amount INTEGER NOT NULL CHECK(amount >= 0), paid INTEGER NOT NULL DEFAULT 0 CHECK(paid >= 0), month TEXT NOT NULL DEFAULT '', note TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
+CREATE INDEX IF NOT EXISTS idx_fee_records_student ON fee_records(student_name);
+CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
