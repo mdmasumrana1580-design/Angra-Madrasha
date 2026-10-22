@@ -175,14 +175,22 @@
     }
   }
 
-  // Admission form: keep it informational only; do not pretend to submit data to a server.
+  // Admission form: store submissions in the Cloudflare D1-backed Worker API.
   const admissionForm = $('admissionForm') || $('admission-form');
   if (admissionForm) {
-    admissionForm.addEventListener('submit', (event) => {
+    admissionForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const msg = $('admissionMsg') || $('admissionMessage') || $('formMessage');
-      if (msg) msg.textContent = 'ধন্যবাদ। ভর্তি সংক্রান্ত তথ্য জমা দেওয়ার জন্য অনুগ্রহ করে একাডেমির সঙ্গে সরাসরি যোগাযোগ করুন।';
-      else alert('ভর্তি সংক্রান্ত তথ্য জমা দেওয়ার জন্য অনুগ্রহ করে একাডেমির সঙ্গে সরাসরি যোগাযোগ করুন।');
+      const msg = $('formMsg') || $('admissionMsg') || $('admissionMessage') || $('formMessage');
+      const values = Object.fromEntries(new FormData(admissionForm).entries());
+      try {
+        const response = await fetch('/api/admissions', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(values) });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || `আবেদন জমা হয়নি (${response.status})`);
+        if (msg) msg.textContent = 'আপনার ভর্তি আবেদন সফলভাবে জমা হয়েছে। একাডেমি থেকে যোগাযোগ করা হবে।';
+        admissionForm.reset();
+      } catch (error) {
+        if (msg) msg.textContent = 'আবেদন জমা হয়নি: ' + error.message;
+      }
     });
   }
 
