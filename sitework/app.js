@@ -232,17 +232,26 @@
       }
     } catch (_) { /* Use the bundled academy banner if settings are unavailable. */ }
     let current = 0;
+    let timer = null;
+    let changing = false;
     image.src = banners[0];
     if (banners.length < 2) return;
-    window.setInterval(() => {
-      image.classList.remove('slide-in');
+
+    // Change banners automatically and allow users to swipe on touch screens.
+    function showBanner(direction) {
+      if (changing || banners.length < 2) return;
+      changing = true;
+      image.classList.remove('slide-in', 'slide-out');
       image.classList.add('slide-out');
       window.setTimeout(() => {
-        current = (current + 1) % banners.length;
+        current = (current + direction + banners.length) % banners.length;
         image.onload = () => {
           image.classList.remove('slide-out');
           image.classList.add('slide-in');
-          window.setTimeout(() => image.classList.remove('slide-in'), 450);
+          window.setTimeout(() => {
+            image.classList.remove('slide-in');
+            changing = false;
+          }, 450);
           image.onload = null;
         };
         image.onerror = () => {
@@ -250,10 +259,33 @@
           image.src = fallback;
           image.classList.remove('slide-out');
           image.classList.add('slide-in');
+          window.setTimeout(() => { image.classList.remove('slide-in'); changing = false; }, 450);
         };
         image.src = banners[current];
       }, 400);
-    }, 3000);
+    }
+
+    timer = window.setInterval(() => showBanner(1), 3000);
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const bannerArea = image.closest('.hero-banner') || image;
+    bannerArea.style.touchAction = 'pan-y';
+    bannerArea.addEventListener('touchstart', (event) => {
+      if (!event.touches || !event.touches.length) return;
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+    bannerArea.addEventListener('touchend', (event) => {
+      if (!event.changedTouches || !event.changedTouches.length) return;
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      const dy = event.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      showBanner(dx < 0 ? 1 : -1); // swipe left = next, swipe right = previous
+      if (timer) {
+        window.clearInterval(timer);
+        timer = window.setInterval(() => showBanner(1), 3000);
+      }
+    }, { passive: true });
   })();
 
   // Smooth scrolling for in-page links.
