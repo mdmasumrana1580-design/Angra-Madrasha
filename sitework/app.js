@@ -151,6 +151,18 @@
     try { return new Intl.DateTimeFormat('bn-BD', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(raw)); }
     catch { return raw; }
   }
+  async function loadTickerLabel() {
+    const label = $('tickerLabel');
+    if (!label) return;
+    try {
+      const settings = await api('/api/settings/public');
+      label.textContent = String(settings.ticker_label || 'শিরোনাম').slice(0, 40);
+    } catch (error) {
+      label.textContent = 'শিরোনাম';
+    }
+  }
+  loadTickerLabel();
+
   async function loadNotices() {
     if (!noticeTargets.length && !ticker) return;
     try {
