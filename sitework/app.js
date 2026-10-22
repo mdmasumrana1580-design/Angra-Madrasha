@@ -1,160 +1,205 @@
+/* Angra Madrasha public website app.js
+   Loads notices, teachers and students from the Cloudflare Worker API.
+   Safe to use with sections that are not present on a page.
+*/
+(() => {
+  'use strict';
 
-const menuBtn = document.getElementById('menuBtn');
-const nav = document.getElementById('nav');
+  const $ = (id) => document.getElementById(id);
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[ch]);
+  const text = (id, value) => { const el = $(id); if (el) el.textContent = value; };
+  const api = async (url) => {
+    const response = await fetch(url, { method: 'GET', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+    let data;
+    try { data = await response.json(); } catch { data = null; }
+    if (!response.ok) throw new Error((data && data.error) || `তথ্য লোড হয়নি (${response.status})`);
+    return data;
+  };
 
-menuBtn?.addEventListener('click', () => nav?.classList.toggle('open'));
-
-const year = document.getElementById('year');
-if (year) year.textContent = new Date().getFullYear();
-
-// Safely display text received from the API
-function escapeText(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[c]));
-}
-
-// Load notices saved by the admin panel from the Worker API
-async function loadNotices() {
-  const noticeList = document.getElementById('noticeList');
-  const tickerText = document.getElementById('tickerText');
-  const tickerTrack = document.getElementById('tickerTrack');
-
-  if (!noticeList) return;
-
-  try {
-    const response = await fetch('/api/notices', {
-      method: 'GET',
-      cache: 'no-store',
-      headers: { 'Accept': 'application/json' }
+  // Mobile navigation (supports common button/nav IDs without requiring them).
+  const menuButton = $('menuToggle') || $('navToggle') || $('menuBtn') || $('mobileMenuBtn');
+  const nav = $('navLinks') || $('mainNav') || document.querySelector('header nav') || document.querySelector('nav');
+  if (menuButton && nav) {
+    menuButton.addEventListener('click', () => {
+      const opened = nav.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(opened));
     });
+    nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+    }));
+  }
 
-    if (!response.ok) {
-      throw new Error('Notice API error: ' + response.status);
+  // Current year.
+  const year = $('year') || $('currentYear') || $('footerYear');
+  if (year) year.textContent = String(new Date().getFullYear());
+
+  // Teacher/student tabs.
+  const teacherTab = $('teachersTab');
+  const studentTab = $('studentsTab');
+  const teacherPanel = $('teachersPanel');
+  const studentPanel = $('studentsPanel');
+  function showPeopleTab(which) {
+    const teachers = which === 'teachers';
+    if (teacherPanel) teacherPanel.hidden = !teachers;
+    if (studentPanel) studentPanel.hidden = teachers;
+    if (teacherPanel) teacherPanel.classList.toggle('active', teachers);
+    if (studentPanel) studentPanel.classList.toggle('active', !teachers);
+    if (teacherTab) {
+      teacherTab.classList.toggle('active', teachers);
+      teacherTab.setAttribute('aria-selected', String(teachers));
     }
-
-    const notices = await response.json();
-
-    if (!Array.isArray(notices)) {
-      throw new Error('Invalid notice data');
+    if (studentTab) {
+      studentTab.classList.toggle('active', !teachers);
+      studentTab.setAttribute('aria-selected', String(!teachers));
     }
+  }
+  if (teacherTab) teacherTab.addEventListener('click', () => showPeopleTab('teachers'));
+  if (studentTab) studentTab.addEventListener('click', () => showPeopleTab('students'));
 
-    if (notices.length === 0) {
-      noticeList.innerHTML =
-        '<article class="notice"><h3>বর্তমানে কোনো নোটিশ নেই</h3><p>নতুন নোটিশ প্রকাশিত হলে এখানে দেখা যাবে।</p></article>';
+  const teacherGrid = $('teacherGrid');
+  const studentGrid = $('studentGrid');
+  let teachersData = [];
+  let studentsData = [];
 
-      if (tickerText) {
-        tickerText.textContent = 'বর্তমানে কোনো নতুন নোটিশ নেই।';
+  function initials(name) {
+    const words = String(name || '').trim().split(/\s+/).filter(Boolean);
+    return (words.slice(0, 2).map(w => [...w][0] || '').join('') || '👤');
+  }
+  function photoMarkup(person, type) {
+    if (person.photo_url) {
+      return `<img class="person-photo" src="${esc(person.photo_url)}" alt="${esc(person.name || 'ছবি')}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">`;
+    }
+    return '';
+  }
+  function teacherCard(person) {
+    const image = photoMarkup(person, 'teachers');
+    const avatar = `<div class="teacher-avatar person-avatar" ${person.photo_url ? 'hidden' : ''}>${esc(initials(person.name))}</div>`;
+    return `<article class="teacher-card person-card">
+      <div class="person-photo-wrap">${image}${avatar}</div>
+      <h3>${esc(person.name)}</h3>
+      ${person.designation ? `<p class="teacher-dept">${esc(person.designation)}</p>` : ''}
+      ${person.subject ? `<p class="person-meta">বিষয়: ${esc(person.subject)}</p>` : ''}
+      ${person.phone ? `<p class="person-meta">মোবাইল: ${esc(person.phone)}</p>` : ''}
+    </article>`;
+  }
+  function studentCard(person) {
+    const image = photoMarkup(person, 'students');
+    const avatar = `<div class="teacher-avatar person-avatar" ${person.photo_url ? 'hidden' : ''}>${esc(initials(person.name))}</div>`;
+    return `<article class="teacher-card student-card person-card">
+      <div class="person-photo-wrap">${image}${avatar}</div>
+      <h3>${esc(person.name)}</h3>
+      ${person.class_name ? `<p class="teacher-dept">শ্রেণি: ${esc(person.class_name)}</p>` : ''}
+      ${person.roll ? `<p class="person-meta">রোল: ${esc(person.roll)}</p>` : ''}
+    </article>`;
+  }
+  function renderPeople(type) {
+    const isTeacher = type === 'teachers';
+    const data = isTeacher ? teachersData : studentsData;
+    const grid = isTeacher ? teacherGrid : studentGrid;
+    const search = $(isTeacher ? 'teacherSearch' : 'studentSearch');
+    const empty = $(isTeacher ? 'teacherEmpty' : 'studentEmpty');
+    const query = (search?.value || '').trim().toLocaleLowerCase('bn');
+    const filtered = data.filter((person) => {
+      const searchable = isTeacher
+        ? [person.name, person.designation, person.subject, person.phone]
+        : [person.name, person.class_name, person.roll];
+      return searchable.join(' ').toLocaleLowerCase('bn').includes(query);
+    });
+    text(isTeacher ? 'teacherCount' : 'studentCount', `${filtered.length} জন`);
+    if (grid) grid.innerHTML = filtered.map(isTeacher ? teacherCard : studentCard).join('');
+    if (empty) {
+      empty.hidden = filtered.length > 0;
+      empty.textContent = data.length === 0
+        ? (isTeacher ? 'শিক্ষকের তথ্য এখনো যোগ করা হয়নি।' : 'শিক্ষার্থীর তথ্য এখনো যোগ করা হয়নি।')
+        : 'আপনার খোঁজের সঙ্গে মেলে এমন তথ্য পাওয়া যায়নি।';
+    }
+  }
+  async function loadPeople(type) {
+    const isTeacher = type === 'teachers';
+    const empty = $(isTeacher ? 'teacherEmpty' : 'studentEmpty');
+    if (empty) { empty.hidden = false; empty.textContent = 'তথ্য লোড হচ্ছে…'; }
+    try {
+      const result = await api(`/api/${type}`);
+      if (!Array.isArray(result)) throw new Error('সঠিক তথ্য পাওয়া যায়নি।');
+      if (isTeacher) teachersData = result; else studentsData = result;
+      renderPeople(type);
+    } catch (error) {
+      if (empty) { empty.hidden = false; empty.textContent = 'তথ্য লোড করা যায়নি। ইন্টারনেট সংযোগ দিয়ে আবার চেষ্টা করুন।'; }
+      console.error(`/${type} load failed:`, error);
+      text(isTeacher ? 'teacherCount' : 'studentCount', '—');
+    }
+  }
+  const teacherSearch = $('teacherSearch');
+  const studentSearch = $('studentSearch');
+  if (teacherSearch) teacherSearch.addEventListener('input', () => renderPeople('teachers'));
+  if (studentSearch) studentSearch.addEventListener('input', () => renderPeople('students'));
+
+  // Notices from the Worker API. Supports multiple common notice-list IDs.
+  const noticeTargets = [
+    $('noticeList'), $('noticesList'), $('noticeGrid'), $('noticesGrid'),
+    $('noticeCards'), $('noticeItems'), $('noticesContainer'), $('noticeBoard')
+  ].filter(Boolean);
+  const ticker = $('noticeTicker') || $('noticeMarquee') || $('noticeTickerText');
+  function formatDate(value) {
+    if (!value) return '';
+    const raw = String(value);
+    // Keep manually entered Bengali dates/labels as supplied.
+    if (!/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw;
+    try { return new Intl.DateTimeFormat('bn-BD', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(raw)); }
+    catch { return raw; }
+  }
+  async function loadNotices() {
+    if (!noticeTargets.length && !ticker) return;
+    try {
+      const items = await api('/api/notices');
+      const list = Array.isArray(items) ? items : [];
+      const tickerText = list.length
+        ? list.map(item => item.title).filter(Boolean).join('  •  ')
+        : 'বর্তমানে কোনো নোটিশ প্রকাশ করা হয়নি।';
+      if (ticker) ticker.textContent = tickerText;
+      noticeTargets.forEach((target) => {
+        target.innerHTML = list.length ? list.map(item => `
+          <article class="notice-card">
+            <div class="notice-date">${esc(formatDate(item.date))}</div>
+            <h3>${esc(item.title)}</h3>
+            <p>${esc(item.body).replace(/\n/g, '<br>')}</p>
+          </article>`).join('') : '<p class="notice-empty">বর্তমানে কোনো নোটিশ প্রকাশ করা হয়নি।</p>';
+      });
+    } catch (error) {
+      console.error('Notices load failed:', error);
+      if (ticker) ticker.textContent = 'নোটিশ লোড করা যায়নি।';
+      noticeTargets.forEach((target) => { target.innerHTML = '<p class="notice-empty">নোটিশ লোড করা যায়নি। পরে আবার চেষ্টা করুন।</p>'; });
+    }
+  }
+
+  // Admission form: keep it informational only; do not pretend to submit data to a server.
+  const admissionForm = $('admissionForm') || $('admission-form');
+  if (admissionForm) {
+    admissionForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const msg = $('admissionMsg') || $('admissionMessage') || $('formMessage');
+      if (msg) msg.textContent = 'ধন্যবাদ। ভর্তি সংক্রান্ত তথ্য জমা দেওয়ার জন্য অনুগ্রহ করে একাডেমির সঙ্গে সরাসরি যোগাযোগ করুন।';
+      else alert('ভর্তি সংক্রান্ত তথ্য জমা দেওয়ার জন্য অনুগ্রহ করে একাডেমির সঙ্গে সরাসরি যোগাযোগ করুন।');
+    });
+  }
+
+  // Smooth scrolling for in-page links.
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (target.id) history.replaceState(null, '', `#${target.id}`);
       }
-
-      tickerTrack?.classList.remove('has-notice');
-      return;
-    }
-
-    // Display newest notices returned by the API
-    noticeList.innerHTML = notices.map(n => `
-      <article class="notice">
-        <span class="date">${escapeText(n.date || 'নোটিশ')}</span>
-        <h3>${escapeText(n.title || 'নোটিশ')}</h3>
-        <p>${escapeText(n.body || '')}</p>
-      </article>
-    `).join('');
-
-    // Show the notices in the moving ticker
-    if (tickerText) {
-      tickerText.textContent = notices
-        .map(n => [n.title, n.body].filter(Boolean).join(' — '))
-        .join('　　 • 　　 ');
-    }
-
-    tickerTrack?.classList.add('has-notice');
-
-  } catch (error) {
-    console.error('নোটিশ লোড করতে সমস্যা হয়েছে:', error);
-
-    noticeList.innerHTML =
-      '<article class="notice"><h3>নোটিশ লোড করা যায়নি</h3><p>অনুগ্রহ করে কিছুক্ষণ পরে আবার চেষ্টা করুন।</p></article>';
-
-    if (tickerText) {
-      tickerText.textContent = 'নোটিশ লোড করা যায়নি। পরে আবার চেষ্টা করুন।';
-    }
-
-    tickerTrack?.classList.remove('has-notice');
-  }
-}
-
-loadNotices();
-
-// Admission demo form
-document.getElementById('admissionForm')?.addEventListener('submit', e => {
-  e.preventDefault();
-
-  const formMsg = document.getElementById('formMsg');
-
-  if (formMsg) {
-    formMsg.textContent =
-      'এটি শুধু নমুনা ফরম। কোনো তথ্য সার্ভারে পাঠানো হয়নি। ভর্তি নিশ্চিত করতে স্কুল অফিসে যোগাযোগ করুন।';
-  }
-
-  e.target.reset();
-});
-
-// Teacher search
-const teacherSearch = document.getElementById('teacherSearch');
-const teacherCards = [...document.querySelectorAll('.teacher-card')];
-const teacherCount = document.getElementById('teacherCount');
-const teacherEmpty = document.getElementById('teacherEmpty');
-
-function filterTeachers() {
-  const q = (teacherSearch?.value || '')
-    .trim()
-    .toLocaleLowerCase('bn');
-
-  let visible = 0;
-
-  teacherCards.forEach(card => {
-    const searchText = (card.dataset.search + ' ' + card.innerText)
-      .toLocaleLowerCase('bn');
-
-    const match = searchText.includes(q);
-    card.hidden = !match;
-
-    if (match) visible++;
+    });
   });
 
-  if (teacherCount) teacherCount.textContent = String(visible);
-  if (teacherEmpty) teacherEmpty.hidden = visible !== 0;
-}
-
-teacherSearch?.addEventListener('input', filterTeachers);
-teacherSearch?.nextElementSibling?.addEventListener('click', filterTeachers);
-
-// Switch between teacher and student categories
-const teachersTab = document.getElementById('teachersTab');
-const studentsTab = document.getElementById('studentsTab');
-const teachersPanel = document.getElementById('teachersPanel');
-const studentsPanel = document.getElementById('studentsPanel');
-
-function showDirectoryCategory(category) {
-  const showTeachers = category === 'teachers';
-
-  if (teachersPanel) teachersPanel.hidden = !showTeachers;
-  if (studentsPanel) studentsPanel.hidden = showTeachers;
-
-  if (teachersTab) {
-    teachersTab.classList.toggle('active', showTeachers);
-    teachersTab.setAttribute('aria-selected', String(showTeachers));
-  }
-
-  if (studentsTab) {
-    studentsTab.classList.toggle('active', !showTeachers);
-    studentsTab.setAttribute('aria-selected', String(!showTeachers));
-  }
-}
-
-teachersTab?.addEventListener('click', () => showDirectoryCategory('teachers'));
-studentsTab?.addEventListener('click', () => showDirectoryCategory('students'));
+  // Start API loads independently so one missing endpoint doesn't stop the page.
+  loadPeople('teachers');
+  loadPeople('students');
+  loadNotices();
+})();
