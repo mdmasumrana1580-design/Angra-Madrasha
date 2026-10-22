@@ -307,7 +307,7 @@ async function handleApi(request, env) {
   }
 
   const protectedRoute = method !== 'GET' || !['/api/admissions','/api/fees','/api/settings'].includes(path);
-  if (path.startsWith('/api/') && ['/api/admissions','/api/fees','/api/settings','/api/settings/public'].includes(path.split('/').slice(0,3).join('/'))) {
+  if (path.startsWith('/api/') && ['/api/admissions','/api/fees','/api/settings'].includes(path.split('/').slice(0,3).join('/'))) {
     if (!originAllowed(request) && method !== 'GET') return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
     if (method !== 'GET' || path !== '/api/settings/public') {
       if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
