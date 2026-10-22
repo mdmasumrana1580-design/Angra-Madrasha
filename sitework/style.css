@@ -282,3 +282,11 @@ img{max-width:100%;height:auto}
   .install-fab{right:59px !important;padding:3px 5px !important;font-size:7px !important}
   .menu{padding:7px 8px}
 }
+
+/* Banner carousel slide animation */
+.hero-banner img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;transform:translateX(0);opacity:1}
+.hero-banner img.slide-out{animation:bannerOut .42s ease-in forwards}
+.hero-banner img.slide-in{animation:bannerIn .42s ease-out both}
+@keyframes bannerOut{to{transform:translateX(-100%);opacity:.75}}
+@keyframes bannerIn{from{transform:translateX(100%);opacity:.75}to{transform:translateX(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.hero-banner img.slide-out,.hero-banner img.slide-in{animation-duration:.01ms}}
