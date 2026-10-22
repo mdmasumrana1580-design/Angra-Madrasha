@@ -201,3 +201,10 @@ nav{border-top:1px solid rgba(255,255,255,.18)}
 .navinner a:hover{color:#fff;background:rgba(255,255,255,.12);border-radius:8px}
 .navinner .adminlink{background:#e8f5ef;color:#075B4B}
 @media(max-width:720px){.navinner a{background:#e8f5ef;color:#075B4B}.navinner a:hover{background:#d5eee3;color:#06483c}.navinner .adminlink{background:#f2bd55;color:#173330}}
+
+/* Fix: keep uploaded teacher/student photos inside their cards on every screen */
+img{max-width:100%;height:auto}
+.person-photo-wrap{width:100%;display:flex;justify-content:center;align-items:center;min-width:0;overflow:hidden;margin:0 auto 16px}
+.person-photo{display:block;width:128px!important;height:128px!important;max-width:100%;max-height:128px;object-fit:cover;border-radius:50%;margin:0 auto;border:5px solid #e8f0f2;box-shadow:0 0 0 1px #d9e5e6}
+.person-avatar{flex:0 0 128px}
+@media(max-width:600px){.person-photo{width:90px!important;height:90px!important;max-height:90px}.person-avatar{flex-basis:90px}}
