@@ -5,17 +5,19 @@
 <meta name="theme-color" content="#075B4B"><meta name="description" content="আংড়া মেছবাহুল উলুম নুরানী একাডেমী — শিক্ষা, আদর্শ ও সুন্দর ভবিষ্যৎ">
 <title>আংড়া মেছবাহুল উলুম নুরানী একাডেমী</title>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
 <header class="header"><div class="wrap brandrow">
   <div class="logo" aria-label="একাডেমীর লোগো"><img src="academy-logo.png" alt="আংড়া মেছবাহুল উলুম নুরানী একাডেমীর লোগো"></div>
   <div class="brand"><h1>আংড়া মেছবাহুল উলুম নুরানী একাডেমী</h1><p>আলোকিত মানুষ গড়ার প্রত্যয়ে</p></div>
+  <button class="install-fab" id="installAppBtn" type="button" aria-label="Install app">⬇ <span>install.apk</span></button>
   <button class="menu" id="menuBtn" aria-label="মেনু খুলুন">☰</button>
 </div>
 <nav id="nav"><div class="wrap navinner"><a href="#home">হোম</a><a href="#about">আমাদের সম্পর্কে</a><a href="#admission">অনলাইন ভর্তি</a><a href="#teachers-students">শিক্ষক/শিক্ষার্থী</a><a href="#programs">শিক্ষা কার্যক্রম</a><a href="#notice">নোটিশ বোর্ড</a><a href="#contact">যোগাযোগ</a><a class="adminlink" href="admin.html">অ্যাডমিন</a></div></nav>
 </header>
 <main>
-<section class="hero-banner" id="home" aria-label="আংড়া মেছবাহুল উলুম নুরানী একাডেমীর ব্যানার"><img id="heroBannerImage" src="banner-academy.jpg" alt="আংড়া মেছবাহুল উলুম নুরানী একাডেমী — শিক্ষার্থী ও প্রতিষ্ঠানের ব্যানার" fetchpriority="high"></section>
+<section class="hero-banner" id="home" aria-label="আংড়া মেছবাহুল উলুম নুরানী একাডেমীর ব্যানার"><img src="banner-academy.jpg" alt="আংড়া মেছবাহুল উলুম নুরানী একাডেমী — শিক্ষার্থী ও প্রতিষ্ঠানের ব্যানার" fetchpriority="high"></section>
 <section class="notice-ticker" aria-label="সর্বশেষ নোটিশ">
   <div class="ticker-icon ticker-label" aria-hidden="true" title="শিরোনাম"><span id="tickerLabel">শিরোনাম</span></div>
   <div class="ticker-window"><div id="tickerTrack" class="ticker-track"><span id="tickerText">এখানে শিরোনামের লেখা প্রদর্শিত হবে।</span></div></div>
@@ -55,4 +57,4 @@
 </div></section>
 <section class="section wrap" id="contact"><div class="sectionhead"><span class="eyebrow">যোগাযোগ</span><h2>স্কুল অফিসের সঙ্গে যোগাযোগ করুন</h2><p></p></div><div class="contactgrid"><div class="contactitem"><span>📍</span><div><b>ঠিকানা</b><p>আংড়া, (পূর্ণ ঠিকানা এখানে যোগ করুন)</p></div></div><div class="contactitem"><span>☎️</span><div><b>ফোন</b><p>স্কুলের অফিস নম্বর যোগ করুন</p></div></div><div class="contactitem"><span>🕘</span><div><b>অফিস সময়</b><p>প্রতিষ্ঠানের সময়সূচি অনুযায়ী</p></div></div></div></section>
 </main><footer><div class="wrap foot"><div><b>আংড়া মেছবাহুল উলুম নুরানী একাডেমী</b><p>শিক্ষা • আদর্শ • ভবিষ্যৎ</p></div><p>© <span id="year"></span> MASUM.ALL RIGHT RESERVED.</p></div></footer>
-<script src="app.js"></script></body></html>
+<script src="app.js"></script><script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));</script></body></html>

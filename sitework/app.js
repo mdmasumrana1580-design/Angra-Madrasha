@@ -10,6 +10,44 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[ch]);
   const text = (id, value) => { const el = $(id); if (el) el.textContent = value; };
+
+  // PWA install button: Android Chrome creates the installed WebAPK from this manifest.
+  let deferredInstallPrompt = null;
+  const installButton = $('installAppBtn');
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (installButton) {
+    if (isStandalone) {
+      installButton.innerHTML = '✓ <span>Installed</span>';
+      installButton.disabled = true;
+      installButton.setAttribute('aria-label', 'App already installed');
+    }
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      installButton.hidden = false;
+    });
+    installButton.addEventListener('click', async () => {
+      if (isStandalone) return;
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        try {
+          const result = await deferredInstallPrompt.userChoice;
+          if (result && result.outcome === 'accepted') {
+            installButton.innerHTML = '✓ <span>Installing…</span>';
+          }
+        } catch (_) {}
+        deferredInstallPrompt = null;
+        return;
+      }
+      alert('অ্যাপ ইনস্টল করতে Chrome-এর উপরের ⋮ মেনু খুলুন, তারপর “Install app” বা “Add to Home screen” নির্বাচন করুন।');
+    });
+    window.addEventListener('appinstalled', () => {
+      installButton.innerHTML = '✓ <span>Installed</span>';
+      installButton.disabled = true;
+    });
+  }
+
+
   const api = async (url) => {
     const response = await fetch(url, { method: 'GET', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
     let data;
@@ -211,82 +249,6 @@
       }
     });
   }
-
-  // Homepage banner carousel: pull image URLs from admin-managed settings.
-  (async function initHeroBanners() {
-    const image = $('heroBannerImage');
-    if (!image) return;
-    const fallback = 'banner-academy.jpg';
-    let banners = [fallback];
-    try {
-      const response = await fetch('/api/settings/public', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
-      if (response.ok) {
-        const settings = await response.json();
-        if (settings.hero_banners) {
-          const parsed = JSON.parse(settings.hero_banners);
-          if (Array.isArray(parsed) && parsed.length) {
-            banners = parsed.map(v => String(v || '').trim()).filter(v => /^(https?:\/\/|\/|\.\/)/i.test(v));
-            if (!banners.length) banners = [fallback];
-          }
-        }
-      }
-    } catch (_) { /* Use the bundled academy banner if settings are unavailable. */ }
-    let current = 0;
-    let timer = null;
-    let changing = false;
-    image.src = banners[0];
-    if (banners.length < 2) return;
-
-    // Change banners automatically and allow users to swipe on touch screens.
-    function showBanner(direction) {
-      if (changing || banners.length < 2) return;
-      changing = true;
-      image.classList.remove('slide-in', 'slide-out');
-      image.classList.add('slide-out');
-      window.setTimeout(() => {
-        current = (current + direction + banners.length) % banners.length;
-        image.onload = () => {
-          image.classList.remove('slide-out');
-          image.classList.add('slide-in');
-          window.setTimeout(() => {
-            image.classList.remove('slide-in');
-            changing = false;
-          }, 450);
-          image.onload = null;
-        };
-        image.onerror = () => {
-          image.onerror = null;
-          image.src = fallback;
-          image.classList.remove('slide-out');
-          image.classList.add('slide-in');
-          window.setTimeout(() => { image.classList.remove('slide-in'); changing = false; }, 450);
-        };
-        image.src = banners[current];
-      }, 400);
-    }
-
-    timer = window.setInterval(() => showBanner(1), 3000);
-    let touchStartX = 0;
-    let touchStartY = 0;
-    const bannerArea = image.closest('.hero-banner') || image;
-    bannerArea.style.touchAction = 'pan-y';
-    bannerArea.addEventListener('touchstart', (event) => {
-      if (!event.touches || !event.touches.length) return;
-      touchStartX = event.touches[0].clientX;
-      touchStartY = event.touches[0].clientY;
-    }, { passive: true });
-    bannerArea.addEventListener('touchend', (event) => {
-      if (!event.changedTouches || !event.changedTouches.length) return;
-      const dx = event.changedTouches[0].clientX - touchStartX;
-      const dy = event.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
-      showBanner(dx < 0 ? 1 : -1); // swipe left = next, swipe right = previous
-      if (timer) {
-        window.clearInterval(timer);
-        timer = window.setInterval(() => showBanner(1), 3000);
-      }
-    }, { passive: true });
-  })();
 
   // Smooth scrolling for in-page links.
   document.querySelectorAll('a[href^="#"]').forEach((link) => {

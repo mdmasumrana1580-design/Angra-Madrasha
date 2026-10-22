@@ -154,13 +154,8 @@ footer{background:linear-gradient(100deg,#042e2a,#06443c)}
 }
 
 /* Full-width academy banner image */
-.hero-banner{width:100%;margin:0;overflow:hidden;background:#e8f7f0;line-height:0;position:relative}
-.hero-banner img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;transform:translateX(0);opacity:1}
-.hero-banner img.slide-out{animation:bannerOut .42s ease-in forwards}
-.hero-banner img.slide-in{animation:bannerIn .42s ease-out both}
-@keyframes bannerOut{to{transform:translateX(-100%);opacity:.75}}
-@keyframes bannerIn{from{transform:translateX(100%);opacity:.75}to{transform:translateX(0);opacity:1}}
-@media(prefers-reduced-motion:reduce){.hero-banner img.slide-out,.hero-banner img.slide-in{animation-duration:.01ms}}
+.hero-banner{width:100%;margin:0;overflow:hidden;background:#e8f7f0;line-height:0}
+.hero-banner img{display:block;width:100%;height:auto;max-width:none;object-fit:contain}
 
 
 /* Scrolling notice ticker directly below the academy banner */
@@ -249,3 +244,12 @@ img{max-width:100%;height:auto}
 .ticker-icon.ticker-label{flex:0 0 auto;width:auto;min-width:42px;height:32px;padding:0 10px;border-radius:10px;background:linear-gradient(135deg,#fff0f0,#ffe0e3);color:#c5162e;font-size:12px;font-weight:900;letter-spacing:.2px;box-shadow:0 3px 10px #d7193420;border:1px solid #ffd0d6}
 .ticker-label span{white-space:nowrap}
 @media(max-width:720px){.ticker-icon.ticker-label{height:29px;min-width:0;padding:0 8px;font-size:11px}}
+
+/* Floating premium PWA install button */
+.brandrow{position:relative}
+.install-fab{position:absolute;right:78px;top:50%;transform:translateY(-50%);z-index:12;display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid rgba(255,255,255,.8);border-radius:999px;color:#fff;background:linear-gradient(135deg,#16a085,#075e54 65%,#0d8f75);font:800 11px/1.2 system-ui,sans-serif;letter-spacing:.25px;box-shadow:0 0 0 1px #70f0ca44,0 0 12px #19cba17a,0 5px 15px #003e3440;cursor:pointer;animation:installGlow 2.4s ease-in-out infinite}
+.install-fab:active{transform:translateY(-50%) scale(.96)}
+.install-fab span{white-space:nowrap}
+@keyframes installGlow{0%,100%{box-shadow:0 0 0 1px #70f0ca44,0 0 9px #19cba166,0 5px 15px #003e3440}50%{box-shadow:0 0 0 2px #a1ffe1aa,0 0 17px #19cba1cc,0 5px 18px #003e344a}}
+@media(max-width:520px){.install-fab{right:72px;padding:7px 9px;font-size:10px;gap:4px}.brandrow{gap:10px}.brand h1{max-width:calc(100% - 4px)}}
+@media(prefers-reduced-motion:reduce){.install-fab{animation:none}}
