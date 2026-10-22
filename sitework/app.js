@@ -304,26 +304,33 @@
     }
 
     timer = window.setInterval(() => showBanner(1), 3000);
-    let touchStartX = 0;
-    let touchStartY = 0;
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swipeActive = false;
     const bannerArea = image.closest('.hero-banner') || image;
+    // Use Pointer Events so both left and right swipes work consistently on Android.
     bannerArea.style.touchAction = 'pan-y';
-    bannerArea.addEventListener('touchstart', (event) => {
-      if (!event.touches || !event.touches.length) return;
-      touchStartX = event.touches[0].clientX;
-      touchStartY = event.touches[0].clientY;
+    bannerArea.style.cursor = 'grab';
+    bannerArea.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      swipeStartX = event.clientX;
+      swipeStartY = event.clientY;
+      swipeActive = true;
     }, { passive: true });
-    bannerArea.addEventListener('touchend', (event) => {
-      if (!event.changedTouches || !event.changedTouches.length) return;
-      const dx = event.changedTouches[0].clientX - touchStartX;
-      const dy = event.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
-      showBanner(dx < 0 ? 1 : -1); // swipe left = next, swipe right = previous
+    bannerArea.addEventListener('pointerup', (event) => {
+      if (!swipeActive) return;
+      swipeActive = false;
+      const dx = event.clientX - swipeStartX;
+      const dy = event.clientY - swipeStartY;
+      if (Math.abs(dx) < 30 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
+      // A rightward swipe goes to the previous banner; leftward goes to the next.
+      showBanner(dx > 0 ? -1 : 1);
       if (timer) {
         window.clearInterval(timer);
         timer = window.setInterval(() => showBanner(1), 3000);
       }
     }, { passive: true });
+    bannerArea.addEventListener('pointercancel', () => { swipeActive = false; }, { passive: true });
   })();
 
 
