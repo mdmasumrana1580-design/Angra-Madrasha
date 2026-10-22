@@ -14,3 +14,6 @@ binding = "DB"
 database_name = "angra-academy-db"
 database_id = "7290ba80-498f-47b0-8b02-965188eb98ea"
 migrations_dir = "migrations"
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "angra-academy-photos"
