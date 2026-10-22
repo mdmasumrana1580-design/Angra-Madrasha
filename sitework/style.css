@@ -290,3 +290,15 @@ img{max-width:100%;height:auto}
 @keyframes bannerOut{to{transform:translateX(-100%);opacity:.75}}
 @keyframes bannerIn{from{transform:translateX(100%);opacity:.75}to{transform:translateX(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.hero-banner img.slide-out,.hero-banner img.slide-in{animation-duration:.01ms}}
+
+/* Direction-aware banner movement for both swipe directions. */
+.hero-banner{overflow:hidden;touch-action:pan-y}
+.hero-banner img.slide-out-left{animation:academyBannerOutLeft .18s ease-in both}
+.hero-banner img.slide-out-right{animation:academyBannerOutRight .18s ease-in both}
+.hero-banner img.slide-in-right{animation:academyBannerInRight .42s ease-out both}
+.hero-banner img.slide-in-left{animation:academyBannerInLeft .42s ease-out both}
+@keyframes academyBannerOutLeft{to{transform:translateX(-22%);opacity:.65}}
+@keyframes academyBannerOutRight{to{transform:translateX(22%);opacity:.65}}
+@keyframes academyBannerInRight{from{transform:translateX(100%);opacity:.7}to{transform:translateX(0);opacity:1}}
+@keyframes academyBannerInLeft{from{transform:translateX(-100%);opacity:.7}to{transform:translateX(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.hero-banner img.slide-out-left,.hero-banner img.slide-out-right,.hero-banner img.slide-in-left,.hero-banner img.slide-in-right{animation-duration:.01ms}}

@@ -250,89 +250,110 @@
     });
   }
 
-  // Homepage banner carousel: pull image URLs from admin-managed settings.
+  // Homepage banner carousel: admin-managed images, autoplay and two-way swipe.
   (async function initHeroBanners() {
     const image = $('heroBannerImage');
     if (!image) return;
     const fallback = 'banner-academy.jpg';
     let banners = [fallback];
     try {
-      const response = await fetch('/api/settings/public', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+      const response = await fetch('/api/settings/public', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
       if (response.ok) {
         const settings = await response.json();
         if (settings.hero_banners) {
           const parsed = JSON.parse(settings.hero_banners);
           if (Array.isArray(parsed) && parsed.length) {
-            banners = parsed.map(v => String(v || '').trim()).filter(v => /^(https?:\/\/|\/|\.\/)/i.test(v));
-            if (!banners.length) banners = [fallback];
+            const valid = parsed.map(v => String(v || '').trim()).filter(v => /^(https?:\/\/|\/|\.\/)/i.test(v));
+            if (valid.length) banners = valid;
           }
         }
       }
-    } catch (_) { /* Use the bundled academy banner if settings are unavailable. */ }
+    } catch (_) { /* Keep bundled fallback banner. */ }
+
     let current = 0;
+    let busy = false;
     let timer = null;
-    let changing = false;
     image.src = banners[0];
     if (banners.length < 2) return;
 
-    // Change banners automatically and allow users to swipe on touch screens.
     function showBanner(direction) {
-      if (changing || banners.length < 2) return;
-      changing = true;
-      image.classList.remove('slide-in', 'slide-out');
-      image.classList.add('slide-out');
-      window.setTimeout(() => {
-        current = (current + direction + banners.length) % banners.length;
-        image.onload = () => {
-          image.classList.remove('slide-out');
-          image.classList.add('slide-in');
+      if (busy || banners.length < 2) return;
+      busy = true;
+      const next = (current + (direction < 0 ? -1 : 1) + banners.length) % banners.length;
+      const nextUrl = banners[next];
+      const preload = new Image();
+      preload.onload = () => {
+        image.classList.remove('slide-in', 'slide-out', 'slide-out-left', 'slide-out-right', 'slide-in-left', 'slide-in-right');
+        // Swipe right means previous: animate the old image to the right and bring previous in from left.
+        image.classList.add(direction < 0 ? 'slide-out-right' : 'slide-out-left');
+        window.setTimeout(() => {
+          current = next;
+          image.src = nextUrl;
+          image.classList.remove('slide-out-left', 'slide-out-right');
+          image.classList.add(direction < 0 ? 'slide-in-left' : 'slide-in-right');
           window.setTimeout(() => {
-            image.classList.remove('slide-in');
-            changing = false;
-          }, 450);
-          image.onload = null;
-        };
-        image.onerror = () => {
-          image.onerror = null;
-          image.src = fallback;
-          image.classList.remove('slide-out');
-          image.classList.add('slide-in');
-          window.setTimeout(() => { image.classList.remove('slide-in'); changing = false; }, 450);
-        };
-        image.src = banners[current];
-      }, 400);
+            image.classList.remove('slide-in-left', 'slide-in-right', 'slide-in', 'slide-out');
+            busy = false;
+          }, 430);
+        }, 180);
+      };
+      preload.onerror = () => {
+        busy = false;
+      };
+      preload.src = nextUrl;
     }
 
-    timer = window.setInterval(() => showBanner(1), 3000);
-    let swipeStartX = 0;
-    let swipeStartY = 0;
-    let swipeActive = false;
-    const bannerArea = image.closest('.hero-banner') || image;
-    // Use Pointer Events so both left and right swipes work consistently on Android.
-    bannerArea.style.touchAction = 'pan-y';
-    bannerArea.style.cursor = 'grab';
-    bannerArea.addEventListener('pointerdown', (event) => {
-      if (event.pointerType === 'mouse' && event.button !== 0) return;
-      swipeStartX = event.clientX;
-      swipeStartY = event.clientY;
-      swipeActive = true;
-    }, { passive: true });
-    bannerArea.addEventListener('pointerup', (event) => {
-      if (!swipeActive) return;
-      swipeActive = false;
-      const dx = event.clientX - swipeStartX;
-      const dy = event.clientY - swipeStartY;
-      if (Math.abs(dx) < 30 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
-      // A rightward swipe goes to the previous banner; leftward goes to the next.
-      showBanner(dx > 0 ? -1 : 1);
-      if (timer) {
-        window.clearInterval(timer);
-        timer = window.setInterval(() => showBanner(1), 3000);
-      }
-    }, { passive: true });
-    bannerArea.addEventListener('pointercancel', () => { swipeActive = false; }, { passive: true });
-  })();
+    function restartAutoplay() {
+      if (timer) window.clearInterval(timer);
+      timer = window.setInterval(() => showBanner(1), 3000);
+    }
+    restartAutoplay();
 
+    const bannerArea = image.closest('.hero-banner') || image;
+    // Keep vertical page scrolling while reliably detecting horizontal swipes.
+    bannerArea.style.touchAction = 'pan-y';
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    bannerArea.addEventListener('touchstart', (event) => {
+      if (!event.touches || event.touches.length !== 1) { tracking = false; return; }
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+      tracking = true;
+    }, { passive: true });
+
+    bannerArea.addEventListener('touchend', (event) => {
+      if (!tracking || !event.changedTouches || !event.changedTouches.length) return;
+      tracking = false;
+      const dx = event.changedTouches[0].clientX - startX;
+      const dy = event.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < 30 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+      // Finger moves left => next; finger moves right => previous.
+      showBanner(dx > 0 ? -1 : 1);
+      restartAutoplay();
+    }, { passive: true });
+
+    // Pointer fallback for browsers/devices that dispatch pointer events but not touch events.
+    if (window.PointerEvent) {
+      let pointerStart = null;
+      bannerArea.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' || event.pointerType === 'pen' || event.pointerType === 'touch') {
+          pointerStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+        }
+      }, { passive: true });
+      bannerArea.addEventListener('pointerup', (event) => {
+        if (!pointerStart || pointerStart.id !== event.pointerId) return;
+        const dx = event.clientX - pointerStart.x;
+        const dy = event.clientY - pointerStart.y;
+        pointerStart = null;
+        if (Math.abs(dx) < 30 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+        showBanner(dx > 0 ? -1 : 1);
+        restartAutoplay();
+      }, { passive: true });
+      bannerArea.addEventListener('pointercancel', () => { pointerStart = null; }, { passive: true });
+    }
+  })();
 
   // Smooth scrolling for in-page links.
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
