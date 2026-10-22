@@ -262,3 +262,23 @@ img{max-width:100%;height:auto}
 @media(min-width:521px) and (max-width:720px){.install-fab{top:calc(50% + 12px);color:#ff9bc8}.brand{flex:1;min-width:0}.brand h1{white-space:nowrap;font-size:clamp(15px,2.7vw,20px)}}
 
 @media(prefers-reduced-motion:reduce){.install-fab{animation:none}}
+
+/* Final mobile header refinement: shorter header and white install label */
+.install-fab{color:#fff !important}
+@media(max-width:720px){
+  .brandrow{padding-top:7px !important;padding-bottom:7px !important;gap:8px}
+  .logo{width:42px;height:42px;flex:0 0 42px;border-radius:50%;font-size:22px}
+  .brand{flex:1 1 auto;min-width:0}
+  .brand h1{font-size:clamp(11px,3.15vw,15px) !important;line-height:1.18 !important;letter-spacing:-.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand p{font-size:10px !important;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .install-fab{right:64px !important;top:calc(50% + 8px) !important;padding:4px 7px !important;font-size:8px !important;color:#fff !important}
+  .menu{padding:8px 10px;font-size:20px;flex:0 0 auto}
+}
+@media(max-width:380px){
+  .brandrow{gap:6px}
+  .logo{width:36px;height:36px;flex-basis:36px}
+  .brand h1{font-size:11px !important}
+  .brand p{font-size:9px !important}
+  .install-fab{right:59px !important;padding:3px 5px !important;font-size:7px !important}
+  .menu{padding:7px 8px}
+}
