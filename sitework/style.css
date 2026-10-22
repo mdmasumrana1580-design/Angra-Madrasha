@@ -163,8 +163,13 @@ footer{background:linear-gradient(100deg,#042e2a,#06443c)}
 .ticker-icon{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;background:#e5222b;color:#fff;border-radius:50%;font-size:22px;box-shadow:0 4px 12px #e5222b30}
 .ticker-window{flex:1;min-width:0;overflow:hidden;white-space:nowrap}
 .ticker-track{display:block;width:max-content;min-width:100%;color:#075bc8;font-size:16px;font-weight:800;line-height:1.8}
-.ticker-track.has-notice{animation:notice-scroll 32s linear infinite; padding-left:100%}
+.ticker-track.has-notice{animation:notice-scroll 48s linear infinite; padding-left:100%}
 .notice-ticker:hover .ticker-track.has-notice{animation-play-state:paused}
+/* Independent admin-managed homepage headline ticker */
+.ticker-label{margin-left:-8px}
+.ticker-track.has-notice{will-change:transform}
+.ticker-window{position:relative}
+@media(max-width:720px){.ticker-label{margin-left:-10px}}
 @keyframes notice-scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @media(max-width:720px){.notice-ticker{min-height:50px;gap:9px;padding:7px 4%}.ticker-icon{flex-basis:36px;width:36px;height:36px;font-size:19px}.ticker-track{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.ticker-track.has-notice{animation-duration:90s}}

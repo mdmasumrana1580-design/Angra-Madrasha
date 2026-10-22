@@ -142,7 +142,9 @@
     $('noticeList'), $('noticesList'), $('noticeGrid'), $('noticesGrid'),
     $('noticeCards'), $('noticeItems'), $('noticesContainer'), $('noticeBoard')
   ].filter(Boolean);
-  const ticker = $('noticeTicker') || $('noticeMarquee') || $('noticeTickerText');
+  // The homepage headline ticker is managed by /api/settings and is intentionally
+  // independent from the notice board. Do not populate it from /api/notices.
+  const ticker = null;
   function formatDate(value) {
     if (!value) return '';
     const raw = String(value);
@@ -157,6 +159,10 @@
     try {
       const settings = await api('/api/settings/public');
       label.textContent = String(settings.ticker_label || 'শিরোনাম').slice(0, 40);
+      const track = $('tickerTrack');
+      const tickerText = $('tickerText');
+      if (tickerText) tickerText.textContent = String(settings.ticker_text || 'এখানে শিরোনামের লেখা প্রদর্শিত হবে।').slice(0, 3000);
+      if (track) track.classList.add('has-notice');
     } catch (error) {
       label.textContent = 'শিরোনাম';
     }
