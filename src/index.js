@@ -296,6 +296,43 @@ async function handleApi(request, env) {
   const path = url.pathname;
   const method = request.method;
 
+  // Public admission intake; submissions are stored in D1 for admin review.
+  if (method === 'POST' && path === '/api/admissions') {
+    if (!originAllowed(request)) return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
+    let body; try { body = await readJson(request); } catch { return json({ error: 'সঠিক তথ্য দিন।' }, 400); }
+    const guardian = cleanText(body.guardian, 120), phone = cleanText(body.phone, 30), grade = cleanText(body.grade, 80), studentName = cleanText(body.studentName || body.student_name, 120);
+    if (!guardian || !phone || !grade) return json({ error: 'অভিভাবকের নাম, ফোন ও শ্রেণি আবশ্যক।' }, 400);
+    const result = await env.DB.prepare('INSERT INTO admissions(student_name,guardian,phone,grade) VALUES(?,?,?,?)').bind(studentName, guardian, phone, grade).run();
+    return json({ ok: true, id: result.meta.last_row_id }, 201);
+  }
+
+  const protectedRoute = method !== 'GET' || !['/api/admissions','/api/fees','/api/settings'].includes(path);
+  if (path.startsWith('/api/') && ['/api/admissions','/api/fees','/api/settings'].includes(path.split('/').slice(0,3).join('/'))) {
+    if (!originAllowed(request) && method !== 'GET') return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
+    if (method !== 'GET' || path !== '/api/settings/public') {
+      if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
+    }
+    if (path === '/api/admissions' && method === 'GET') {
+      const { results } = await env.DB.prepare('SELECT * FROM admissions ORDER BY id DESC LIMIT 1000').all(); return json(results);
+    }
+    const admissionMatch = path.match(/^\/api\/admissions\/(\d+)$/);
+    if (admissionMatch && method === 'PATCH') {
+      let b; try { b=await readJson(request); } catch { return json({error:'সঠিক তথ্য দিন।'},400); }
+      await env.DB.prepare('UPDATE admissions SET status=?, notes=? WHERE id=?').bind(cleanText(b.status,40)||'নতুন',cleanText(b.notes,1000),Number(admissionMatch[1])).run(); return json({ok:true});
+    }
+    if (admissionMatch && method === 'DELETE') { await env.DB.prepare('DELETE FROM admissions WHERE id=?').bind(Number(admissionMatch[1])).run(); return json({ok:true}); }
+    if (path === '/api/fees' && method === 'GET') { const {results}=await env.DB.prepare('SELECT * FROM fee_records ORDER BY id DESC LIMIT 1000').all(); return json(results); }
+    if (path === '/api/fees' && method === 'POST') {
+      let b; try { b=await readJson(request); } catch { return json({error:'সঠিক তথ্য দিন।'},400); }
+      const name=cleanText(b.student_name||b.studentName,120), cls=cleanText(b.class_name||b.className,50), month=cleanText(b.month,40), amount=Number(b.amount), paid=Number(b.paid||0), note=cleanText(b.note,500);
+      if(!name || !Number.isInteger(amount) || amount<0 || !Number.isInteger(paid) || paid<0 || paid>amount) return json({error:'শিক্ষার্থীর নাম ও সঠিক ফি/জমার পরিমাণ দিন।'},400);
+      const r=await env.DB.prepare('INSERT INTO fee_records(student_name,class_name,amount,paid,month,note) VALUES(?,?,?,?,?,?)').bind(name,cls,amount,paid,month,note).run(); return json({ok:true,id:r.meta.last_row_id},201);
+    }
+    const feeMatch=path.match(/^\/api\/fees\/(\d+)$/); if(feeMatch && method==='DELETE'){await env.DB.prepare('DELETE FROM fee_records WHERE id=?').bind(Number(feeMatch[1])).run();return json({ok:true});}
+    if (path === '/api/settings' && method === 'GET') { const {results}=await env.DB.prepare('SELECT key,value,updated_at FROM site_settings ORDER BY key').all(); return json(Object.fromEntries(results.map(r=>[r.key,r.value]))); }
+    if (path === '/api/settings' && method === 'PUT') { let b; try{b=await readJson(request)}catch{return json({error:'সঠিক তথ্য দিন।'},400)}; for(const [k,v] of Object.entries(b)){if(!/^[a-zA-Z0-9_-]{1,60}$/.test(k))continue; await env.DB.prepare("INSERT INTO site_settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now')").bind(k,cleanText(v,3000)).run();} return json({ok:true}); }
+  }
+
   if (method === 'GET' && path === '/api/notices') {
     const { results } = await env.DB.prepare(
       'SELECT id,title,date,body,created_at FROM notices ORDER BY id DESC LIMIT 100'
