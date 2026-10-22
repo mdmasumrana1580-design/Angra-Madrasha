@@ -1,5 +1,5 @@
 
-name = 'amunaacademy'
+name = 'angra-madrasha'
 main = "src/index.js"
 compatibility_date = "2025-03-01"
 workers_dev = true
