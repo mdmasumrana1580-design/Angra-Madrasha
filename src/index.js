@@ -312,6 +312,10 @@ async function handleApi(request, env) {
     if (method !== 'GET' || path !== '/api/settings/public') {
       if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
     }
+    if (path === '/api/settings/public' && method === 'GET') {
+      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key='ticker_label'").all();
+      return json(Object.fromEntries(results.map(r => [r.key, r.value])));
+    }
     if (path === '/api/admissions' && method === 'GET') {
       const { results } = await env.DB.prepare('SELECT * FROM admissions ORDER BY id DESC LIMIT 1000').all(); return json(results);
     }
