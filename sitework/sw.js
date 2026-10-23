@@ -1,4 +1,4 @@
-const CACHE_NAME = 'angra-nurani-academy-v1';
+const CACHE_NAME = 'amun-academy-v2';
 const CORE = ['/', '/index.html', '/style.css', '/app.js', '/manifest.webmanifest', '/app-icon-192.png', '/app-icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE)).catch(() => {}));
