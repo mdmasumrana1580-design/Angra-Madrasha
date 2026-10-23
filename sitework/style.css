@@ -271,7 +271,7 @@ img{max-width:100%;height:auto}
   .brand{flex:1 1 auto;min-width:0}
   .brand h1{font-size:clamp(11px,3.15vw,15px) !important;line-height:1.18 !important;letter-spacing:-.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .brand p{font-size:10px !important;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .install-fab{right:64px !important;top:calc(50% + 8px) !important;padding:4px 7px !important;font-size:8px !important;color:#fff !important}
+  .install-fab{right:54px !important;top:calc(50% + 8px) !important;padding:4px 7px !important;font-size:8px !important;color:#fff !important}
   .menu{padding:8px 10px;font-size:20px;flex:0 0 auto}
 }
 @media(max-width:380px){
@@ -279,7 +279,7 @@ img{max-width:100%;height:auto}
   .logo{width:36px;height:36px;flex-basis:36px}
   .brand h1{font-size:11px !important}
   .brand p{font-size:9px !important}
-  .install-fab{right:59px !important;padding:3px 5px !important;font-size:7px !important}
+  .install-fab{right:49px !important;padding:3px 5px !important;font-size:7px !important}
   .menu{padding:7px 8px}
 }
 
