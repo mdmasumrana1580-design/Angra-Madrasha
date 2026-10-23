@@ -325,7 +325,7 @@ async function handleApi(request, env) {
       if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
     }
     if (path === '/api/settings/public' && method === 'GET') {
-      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key IN ('ticker_label','ticker_text','hero_banners')").all();
+      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key IN ('ticker_label','ticker_text','hero_banners','about_button_url','about_button_enabled','programs_button_url','programs_button_enabled','contact_button_url','contact_button_enabled','facebook_button_url','facebook_button_enabled','messenger_button_url','messenger_button_enabled','whatsapp_button_url','whatsapp_button_enabled')").all();
       return json(Object.fromEntries(results.map(r => [r.key, r.value])));
     }
     if (path === '/api/admissions' && method === 'GET') {
