@@ -109,7 +109,51 @@ function renderPeople(el,arr,kind){el.innerHTML=arr.length?arr.map(p=>`<article 
 async function loadPeople(kind){const teacher=kind==='teachers',el=$(teacher?'#teacherList':'#studentList');try{const d=await api('/api/'+kind);const arr=Array.isArray(d)?d:(d[kind]||d.items||[]);setCounts(kind,arr.length);renderPeople(el,arr,kind)}catch(e){setCounts(kind,'—');el.innerHTML=`<div class="status">${teacher?'শিক্ষক':'শিক্ষার্থী'} তালিকা লোড হয়নি: ${esc(e.message)}</div>`}}
 personForm($('#teacherForm'),'teachers');personForm($('#studentForm'),'students');
 async function loadAdmissions(){const el=$('#admissionList');try{const a=await api('/api/admissions');el.innerHTML=a.length?a.map(x=>`<article class="notice" data-print-card="${x.id}">${x.photo_key?`<p><img src="/api/photos?key=${encodeURIComponent(x.photo_key)}" alt="শিক্ষার্থীর ছবি" style="width:90px;height:110px;object-fit:cover;border-radius:10px;border:1px solid #c7e1d5"></p>`:''}<div class="noticeTitle">${esc(x.student_name||'শিক্ষার্থী উল্লেখ নেই')} — ${esc(x.grade)}</div><p>বিভাগ: ${esc(x.department||'—')} • জন্মতারিখ: ${esc(x.birth_date||'—')} • লিঙ্গ: ${esc(x.gender||'—')}</p><p>অভিভাবক: ${esc(x.guardian)} • ফোন: ${esc(x.phone)} • সম্পর্ক: ${esc(x.relation||'—')}</p><p>ঠিকানা: ${esc(x.address||'—')} • আগের প্রতিষ্ঠান: ${esc(x.previous_school||'—')}</p><p>অবস্থা: <b>${esc(x.status)}</b> • ${dateFmt(x.created_at)}</p><div class="actions"><select data-admission-status="${x.id}"><option ${x.status==='নতুন'?'selected':''}>নতুন</option><option ${x.status==='যোগাযোগ হয়েছে'?'selected':''}>যোগাযোগ হয়েছে</option><option ${x.status==='ভর্তি সম্পন্ন'?'selected':''}>ভর্তি সম্পন্ন</option><option ${x.status==='বাতিল'?'selected':''}>বাতিল</option></select><button class="btn" data-save-admission="${x.id}">অবস্থা সংরক্ষণ</button><button class="btn light" data-print-admission="${x.id}">🖨️ প্রিন্ট / PDF</button><button class="btn red" data-del-admission="${x.id}">মুছুন</button></div></article>`).join(''):'<div class="status">এখনো কোনো ভর্তি আবেদন জমা হয়নি।</div>'}catch(e){el.innerHTML=`<div class="status">ভর্তি আবেদন লোড হয়নি: ${esc(e.message)}</div>`}}
-function printAdmissionCard(id){const card=$(`[data-print-card="${id}"]`);if(!card){toast('আবেদনটি পাওয়া যায়নি');return}const photo=card.querySelector('img');const clone=card.cloneNode(true);clone.querySelectorAll('.actions,button,select').forEach(n=>n.remove());const win=window.open('','_blank','width=850,height=700');if(!win){toast('প্রিন্ট খুলতে ব্রাউজারের pop-up অনুমতি দিন');return}win.document.write(`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ভর্তি আবেদন - AMUN Academy</title><style>body{font-family:Arial,'Noto Sans Bengali',sans-serif;color:#173d35;margin:28px;line-height:1.65}header{text-align:center;border-bottom:3px solid #08765d;padding-bottom:14px;margin-bottom:22px}h1{color:#07594d;font-size:24px;margin:0}h2{font-size:19px;margin:10px 0}p{margin:7px 0;overflow-wrap:anywhere}.paper{border:1px solid #cfe4da;border-radius:12px;padding:20px}.photo{width:100px;height:120px;object-fit:cover;border:1px solid #cfe4da;border-radius:8px;float:right;margin:0 0 12px 18px}.actions,button,select{display:none!important}.foot{margin-top:28px;border-top:1px solid #cfe4da;padding-top:12px;font-size:12px;color:#607a71}@media print{body{margin:12mm}.paper{break-inside:avoid}}</style></head><body><header><h1>আংড়া মেহবাহুল উলুম নূরানী একাডেমী</h1><div>অনলাইন ভর্তি আবেদন</div></header><main class="paper">${clone.innerHTML}<div style="clear:both"></div><div class="foot">প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')} • AMUN Academy</div></main><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>`);win.document.close()}
+function printAdmissionCard(id){const card=$(`[data-print-card="${id}"]`);if(!card){toast('আবেদনটি পাওয়া যায়নি');return}const photo=card.querySelector('img');const clone=card.cloneNode(true);clone.querySelectorAll('.actions,button,select').forEach(n=>n.remove());const win=window.open('','_blank','width=850,height=700');if(!win){toast('প্রিন্ট খুলতে ব্রাউজারের pop-up অনুমতি দিন');return}win.document.write(`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ভর্তি আবেদন - AMUN Academy</title><style>body{font-family:Arial,'Noto Sans Bengali',sans-serif;color:#173d35;margin:28px;line-height:1.65}header{text-align:center;border-bottom:3px solid #08765d;padding-bottom:14px;margin-bottom:22px}h1{color:#07594d;font-size:24px;margin:0}h2{font-size:19px;margin:10px 0}p{margin:7px 0;overflow-wrap:anywhere}.paper{border:1px solid #cfe4da;border-radius:12px;padding:20px}.photo{width:100px;height:120px;object-fit:cover;border:1px solid #cfe4da;border-radius:8px;float:right;margin:0 0 12px 18px}.actions,button,select{display:none!important}.foot{margin-top:28px;border-top:1px solid #cfe4da;padding-top:12px;font-size:12px;color:#607a71}@media print{body{margin:12mm}.paper{break-inside:avoid}}
+/* Final mobile layout correction */
+@media(max-width:760px){
+  .content{padding:8px 10px 10px!important}
+  .clockBanner{min-height:76px!important;gap:8px!important;padding:8px 9px!important;margin-bottom:8px!important}
+  .clockFace{width:38px!important;height:38px!important;flex-basis:38px!important;font-size:24px!important}
+  .clockBanner .clock{font-size:clamp(15px,4vw,21px)!important}
+  .clockBanner small{font-size:9px!important}
+  .clockDivider{height:36px!important}
+  .calendarIcon{font-size:19px!important}
+  .calendarInfo b{font-size:9px!important}
+  .calendarInfo small{font-size:8px!important}
+  .serverStatus{font-size:8px!important;max-width:42px!important}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:8px 0 10px!important}
+  .stat{padding:9px!important;min-height:92px!important;border-radius:14px!important}
+  .statIcon{width:34px!important;height:34px!important;flex-basis:34px!important;border-radius:11px!important;font-size:17px!important}
+  .statTop{gap:7px!important}
+  .stat label{font-size:10px!important}
+  .stat strong{font-size:22px!important;line-height:1.15!important}
+  .stat .details,.stat a{font-size:10px!important}
+  .quickPanel,.quickSection{margin-top:8px!important;padding:10px!important}
+  .quickGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+  .quick{padding:7px 3px!important;gap:5px!important;border-radius:12px!important;min-height:70px!important;min-width:0!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;overflow-wrap:anywhere}
+  .quick>span:last-child{display:block!important;width:100%!important;min-width:0!important}
+  .quick .qIcon{width:29px!important;height:29px!important;flex:0 0 29px!important;border-radius:9px!important;font-size:14px!important}
+  .quick b{font-size:9px!important;line-height:1.25!important;overflow-wrap:anywhere}
+  .quick small{display:none!important}
+  /* Recent activity and notice feed are reachable from the menu; hide them on the compact dashboard */
+  .lower{display:none!important}
+  /* Drawer opens from the right because the trigger is the top-right three-dot button */
+  .sidebar{left:auto!important;right:0!important;transform:translateX(105%)!important;width:min(300px,86vw)!important;box-shadow:-20px 0 45px #002e2850!important}
+  .sidebar.open{transform:translateX(0)!important}
+  .sidebarBackdrop.open{display:block!important}
+  .toast{bottom:14px}
+}
+@media(max-width:380px){
+  .quickGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important}
+  .quick{min-height:66px!important;padding:6px 2px!important}
+  .quick .qIcon{width:26px!important;height:26px!important;flex-basis:26px!important;font-size:13px!important}
+  .quick b{font-size:8px!important}
+  .clockBanner{gap:6px!important;padding:7px!important}
+  .clockFace{width:32px!important;height:32px!important;flex-basis:32px!important;font-size:21px!important}
+  .clockBanner .clock{font-size:15px!important}
+}
+</style></head><body><header><h1>আংড়া মেহবাহুল উলুম নূরানী একাডেমী</h1><div>অনলাইন ভর্তি আবেদন</div></header><main class="paper">${clone.innerHTML}<div style="clear:both"></div><div class="foot">প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')} • AMUN Academy</div></main><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>`);win.document.close()}
 $('#admissionList').addEventListener('click',async e=>{const save=e.target.closest('[data-save-admission]'),del=e.target.closest('[data-del-admission]'),print=e.target.closest('[data-print-admission]');try{if(print){printAdmissionCard(print.dataset.printAdmission);return}if(save){const id=save.dataset.saveAdmission,status=$(`[data-admission-status="${id}"]`).value;await api('/api/admissions/'+id,{method:'PATCH',body:JSON.stringify({status})});toast('অবস্থা সংরক্ষিত');loadAdmissions()}else if(del&&confirm('এই আবেদন মুছবেন?')){await api('/api/admissions/'+del.dataset.delAdmission,{method:'DELETE'});loadAdmissions();toast('আবেদন মুছে ফেলা হয়েছে')}}catch(err){toast(err.message)}});
 $('#reloadAdmissions').onclick=loadAdmissions;
 document.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.target;document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});if(['admissions','attendance','results','classes','reports','backup','settings'].includes(id))toast('এই বিভাগের কার্যকর সুবিধার জন্য Worker API যুক্ত করতে হবে');setMenu(false)}));
