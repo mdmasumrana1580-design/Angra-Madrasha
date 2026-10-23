@@ -201,6 +201,15 @@
       const tickerText = $('tickerText');
       if (tickerText) tickerText.textContent = String(settings.ticker_text || 'এখানে শিরোনামের লেখা প্রদর্শিত হবে।').slice(0, 3000);
       if (track) track.classList.add('has-notice');
+      const linkDefs=[
+        ['about_button_url','about_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#about'],
+        ['programs_button_url','programs_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#programs'],
+        ['contact_button_url','contact_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#contact'],
+        ['facebook_button_url','facebook_button_enabled','https://www.facebook.com/share/1CLLeqB2qh/'],
+        ['messenger_button_url','messenger_button_enabled','https://m.me/j/AbZjcmPGg-NwO5fP/?send_source=gc%3Acopy_invite_link_t'],
+        ['whatsapp_button_url','whatsapp_button_enabled','https://wa.me/8801726234027']
+      ];
+      linkDefs.forEach(([urlKey,enabledKey,fallback])=>document.querySelectorAll(`[data-public-link="${urlKey}"]`).forEach(el=>{el.href=settings[urlKey]||fallback;el.hidden=(settings[enabledKey]??'1')==='0';el.style.display=el.hidden?'none':''}));
     } catch (error) {
       label.textContent = 'শিরোনাম';
     }

@@ -114,6 +114,7 @@
     <a href="#notices"><span class="ic">📢</span>নোটিশ বোর্ড</a>
     <a href="#ticker-settings"><span class="ic">🔴</span>শিরোনাম সেটিংস</a>
     <a href="#banner-settings"><span class="ic">🖼️</span>ব্যানার ব্যবস্থাপনা</a>
+    <a href="#homepage-links"><span class="ic">🔗</span>হোমপেজ বাটন নিয়ন্ত্রণ</a>
   </nav>
   <div class="sidebarBottom"><button class="logout" id="logoutBtn">↪ লগআউট</button><div class="sideQuote">“শিক্ষাই আমাদের শক্তি<br>আদর্শ আমাদের পথ”</div></div>
 </aside>
@@ -135,13 +136,29 @@
     <button class="quick" data-target="notices" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e8"><span class="qIcon">📢</span><span><b>নোটিশ বোর্ড</b><small>নোটিশ প্রকাশ ও মুছুন</small></span></button>
     <button class="quick" data-target="ticker-settings" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e5"><span class="qIcon">🔴</span><span><b>শিরোনাম সেটিংস</b><small>হোমপেজের লাল শিরোনাম পরিবর্তন</small></span></button>
     <button class="quick" data-target="banner-settings" style="--c:#0b7e70;--bg:#effbf8;--border:#cdeee5"><span class="qIcon">🖼️</span><span><b>ব্যানার ব্যবস্থাপনা</b><small>হোমপেজের ব্যানার যোগ/পরিবর্তন</small></span></button>
-  </div></section>
+    <a class="quick outboundQuick" data-outbound="about_button_url" href="https://angra-madrasha.masum-tv.workers.dev/#about" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0;text-decoration:none"><span class="qIcon">🏫</span><span><b>আমাদের সম্পর্কে</b><small>স্কুল পরিচিতি</small></span></a>
+    <a class="quick outboundQuick" data-outbound="programs_button_url" href="https://angra-madrasha.masum-tv.workers.dev/#programs" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff;text-decoration:none"><span class="qIcon">📚</span><span><b>শিক্ষা কার্যক্রম</b><small>আমাদের পাঠদান</small></span></a>
+    <a class="quick outboundQuick" data-outbound="contact_button_url" href="https://angra-madrasha.masum-tv.workers.dev/#contact" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5;text-decoration:none"><span class="qIcon">☎️</span><span><b>যোগাযোগ</b><small>স্কুল অফিস</small></span></a>
+    <a class="quick outboundQuick" data-outbound="facebook_button_url" href="https://www.facebook.com/share/1CLLeqB2qh/" target="_blank" rel="noopener noreferrer" style="--c:#1877f2;--bg:#f0f7ff;--border:#d2e7ff;text-decoration:none"><span class="qIcon">f</span><span><b>FACEBOOK</b><small>Facebook পেজ খুলুন</small></span></a>
+    <a class="quick outboundQuick" data-outbound="messenger_button_url" href="https://m.me/j/AbZjcmPGg-NwO5fP/?send_source=gc%3Acopy_invite_link_t" target="_blank" rel="noopener noreferrer" style="--c:#8a45ee;--bg:#f7f0ff;--border:#e5d8ff;text-decoration:none"><span class="qIcon">✉</span><span><b>MESSENGER</b><small>Messenger খুলুন</small></span></a>
+    <a class="quick outboundQuick" data-outbound="whatsapp_button_url" href="https://wa.me/8801726234027" target="_blank" rel="noopener noreferrer" style="--c:#159b64;--bg:#effbf5;--border:#c9eed8;text-decoration:none"><span class="qIcon">☎</span><span><b>WHATSAPP</b><small>WhatsApp খুলুন</small></span></a>
+  </div><div class="actions" style="margin-top:12px"><button class="btn light" type="button" data-target="homepage-links">🔗 এই ৬টি বাটন নিয়ন্ত্রণ করুন</button></div></section>
   <div class="lower">
     <section class="panel section" id="notices"><div class="panelHead"><h3>📢 সাম্প্রতিক নোটিশ</h3><button class="btn light" id="reloadNotices">রিফ্রেশ ↻</button></div>
       <form id="noticeForm"><div class="field"><label for="noticeTitle">নোটিশের শিরোনাম</label><input id="noticeTitle" required maxlength="150" placeholder="যেমন: পরীক্ষার রুটিন প্রকাশ"></div><div class="field"><label for="noticeBody">নোটিশের বিস্তারিত</label><textarea id="noticeBody" rows="3" required placeholder="নোটিশের বিস্তারিত লিখুন"></textarea></div><div class="actions"><button class="btn" type="submit">＋ নোটিশ প্রকাশ</button></div></form><div id="noticeList"></div>
     </section>
     <div><section class="panel section"><div class="panelHead"><h3>◈ এক নজরে তথ্য</h3></div><div class="fact"><span class="factIcon">♟</span>মোট শিক্ষক <b id="teacherCount2">—</b></div><div class="fact"><span class="factIcon">🎓</span>মোট শিক্ষার্থী <b id="studentCount2">—</b></div><div class="fact"><span class="factIcon">▤</span>মোট নোটিশ <b id="noticeCount2">—</b></div><div class="fact"><span class="factIcon">📚</span>একাডেমি বিভাগ <b>১০+</b></div></section><section class="panel section"><div class="panelHead"><h3>✦ সাম্প্রতিক কার্যক্রম</h3></div><div class="activity"><span class="dot"></span>ড্যাশবোর্ড খোলা হয়েছে</div><div class="activity"><span class="dot" style="background:#2c8df0"></span>সার্ভার সংযোগ পরীক্ষা করা হচ্ছে</div><div class="activity"><span class="dot" style="background:#f0a22b"></span>নোটিশ ও তালিকা লোড করা হচ্ছে</div></section></div>
   </div>
+  <section class="panel section" id="homepage-links"><div class="panelHead"><h3>🔗 হোমপেজের ৬টি বাটন নিয়ন্ত্রণ</h3><small>লিংক পরিবর্তন ও চালু/বন্ধ করুন</small></div>
+    <form id="homepageLinksForm"><div class="formGrid">
+      <div class="field"><label for="aboutButtonUrl">🏫 আমাদের সম্পর্কে — URL</label><input id="aboutButtonUrl" name="about_button_url" type="url" required value="https://angra-madrasha.masum-tv.workers.dev/#about" placeholder="https://..."/><label><input type="checkbox" id="aboutButtonEnabled" checked> বাটন চালু রাখুন</label></div>
+      <div class="field"><label for="programsButtonUrl">📚 শিক্ষা কার্যক্রম — URL</label><input id="programsButtonUrl" name="programs_button_url" type="url" required value="https://angra-madrasha.masum-tv.workers.dev/#programs" placeholder="https://..."/><label><input type="checkbox" id="programsButtonEnabled" checked> বাটন চালু রাখুন</label></div>
+      <div class="field"><label for="contactButtonUrl">☎️ যোগাযোগ — URL</label><input id="contactButtonUrl" name="contact_button_url" type="url" required value="https://angra-madrasha.masum-tv.workers.dev/#contact" placeholder="https://..."/><label><input type="checkbox" id="contactButtonEnabled" checked> বাটন চালু রাখুন</label></div>
+      <div class="field"><label for="facebookButtonUrl">Facebook — URL</label><input id="facebookButtonUrl" name="facebook_button_url" type="url" required value="https://www.facebook.com/share/1CLLeqB2qh/" placeholder="https://facebook.com/..."/><label><input type="checkbox" id="facebookButtonEnabled" checked> বাটন চালু রাখুন</label></div>
+      <div class="field"><label for="messengerButtonUrl">Messenger — URL</label><input id="messengerButtonUrl" name="messenger_button_url" type="url" required value="https://m.me/j/AbZjcmPGg-NwO5fP/?send_source=gc%3Acopy_invite_link_t" placeholder="https://m.me/..."/><label><input type="checkbox" id="messengerButtonEnabled" checked> বাটন চালু রাখুন</label></div>
+      <div class="field"><label for="whatsappButtonUrl">WhatsApp — URL</label><input id="whatsappButtonUrl" name="whatsapp_button_url" type="url" required value="https://wa.me/8801726234027" placeholder="https://wa.me/..."/><label><input type="checkbox" id="whatsappButtonEnabled" checked> বাটন চালু রাখুন</label></div>
+    </div><div class="actions"><button class="btn" type="submit">৬টি বাটনের সেটিংস সংরক্ষণ</button><button class="btn light" id="reloadHomepageLinks" type="button">রিফ্রেশ ↻</button></div><div class="status">এখানে URL পরিবর্তন করলে হোমপেজের সংশ্লিষ্ট দ্রুত লিংক/সামাজিক বাটনের ঠিকানা বদলাবে। টিক তুলে দিলে সেই বাটন ওয়েবসাইটে লুকানো থাকবে।</div></form>
+  </section>
   <section class="panel section" id="ticker-settings"><div class="panelHead"><h3>🔴 হোমপেজের লাল শিরোনাম</h3><small>নোটিশ আইকনের জায়গায় দেখাবে</small></div>
     <form id="tickerLabelForm"><div class="field"><label for="tickerLabelInput">লাল লেবেলের লেখা</label><input id="tickerLabelInput" maxlength="40" value="শিরোনাম" placeholder="শিরোনাম"></div><div class="field"><label for="tickerTextInput">চলমান শিরোনামের লেখা</label><textarea id="tickerTextInput" rows="3" maxlength="3000" placeholder="যে লেখাটি ডান দিক থেকে বামে চলবে তা লিখুন"></textarea></div><div class="actions"><button class="btn" type="submit">শিরোনাম সংরক্ষণ</button><button class="btn light" type="button" id="reloadTickerLabel">রিফ্রেশ</button></div></form><div class="status">এই চলমান লেখা নোটিশ বোর্ড থেকে আলাদা। এখানে লেখা পরিবর্তন করলে শুধু হোমপেজের লাল শিরোনামের পাশের চলমান লেখাটি বদলাবে; নোটিশ বোর্ড অপরিবর্তিত থাকবে।</div>
   </section>
@@ -201,10 +218,22 @@ function printAdmissionCard(id){const card=$(`[data-print-card="${id}"]`);if(!ca
 $('#admissionList').addEventListener('click',async e=>{const save=e.target.closest('[data-save-admission]'),del=e.target.closest('[data-del-admission]'),print=e.target.closest('[data-print-admission]');try{if(print){printAdmissionCard(print.dataset.printAdmission);return}if(save){const id=save.dataset.saveAdmission,status=$(`[data-admission-status="${id}"]`).value;await api('/api/admissions/'+id,{method:'PATCH',body:JSON.stringify({status})});toast('অবস্থা সংরক্ষিত');loadAdmissions()}else if(del&&confirm('এই আবেদন মুছবেন?')){await api('/api/admissions/'+del.dataset.delAdmission,{method:'DELETE'});loadAdmissions();toast('আবেদন মুছে ফেলা হয়েছে')}}catch(err){toast(err.message)}});
 $('#reloadAdmissions').onclick=loadAdmissions;
 window.__loadAdmissions=loadAdmissions;
+const homepageLinkConfig=[
+ {key:'about_button_url',enabled:'about_button_enabled',input:'#aboutButtonUrl',check:'#aboutButtonEnabled',fallback:'https://angra-madrasha.masum-tv.workers.dev/#about'},
+ {key:'programs_button_url',enabled:'programs_button_enabled',input:'#programsButtonUrl',check:'#programsButtonEnabled',fallback:'https://angra-madrasha.masum-tv.workers.dev/#programs'},
+ {key:'contact_button_url',enabled:'contact_button_enabled',input:'#contactButtonUrl',check:'#contactButtonEnabled',fallback:'https://angra-madrasha.masum-tv.workers.dev/#contact'},
+ {key:'facebook_button_url',enabled:'facebook_button_enabled',input:'#facebookButtonUrl',check:'#facebookButtonEnabled',fallback:'https://www.facebook.com/share/1CLLeqB2qh/'},
+ {key:'messenger_button_url',enabled:'messenger_button_enabled',input:'#messengerButtonUrl',check:'#messengerButtonEnabled',fallback:'https://m.me/j/AbZjcmPGg-NwO5fP/?send_source=gc%3Acopy_invite_link_t'},
+ {key:'whatsapp_button_url',enabled:'whatsapp_button_enabled',input:'#whatsappButtonUrl',check:'#whatsappButtonEnabled',fallback:'https://wa.me/8801726234027'}
+];
+async function loadHomepageLinkSettings(){try{const d=await api('/api/settings');homepageLinkConfig.forEach(x=>{$(x.input).value=d[x.key]||x.fallback;$(x.check).checked=(d[x.enabled]??'1')!=='0'});applyHomepageLinks(d)}catch(e){toast('হোমপেজ বাটন সেটিংস লোড হয়নি: '+e.message)}}
+function applyHomepageLinks(d){homepageLinkConfig.forEach(x=>{document.querySelectorAll(`[data-outbound="${x.key}"]`).forEach(el=>{el.href=d[x.key]||x.fallback;el.hidden=(d[x.enabled]??'1')==='0';el.style.display=el.hidden?'none':''})})}
+$('#homepageLinksForm').addEventListener('submit',async e=>{e.preventDefault();const payload={};for(const x of homepageLinkConfig){const url=$(x.input).value.trim();if(!/^https:\/\//i.test(url)){toast('সব লিংক https:// দিয়ে শুরু হতে হবে।');return}payload[x.key]=url;payload[x.enabled]=$(x.check).checked?'1':'0'}try{await api('/api/settings',{method:'PUT',body:JSON.stringify(payload)});applyHomepageLinks(payload);toast('৬টি বাটনের সেটিংস সংরক্ষিত হয়েছে')}catch(err){toast('সেটিংস সংরক্ষণ হয়নি: '+err.message)}});
+$('#reloadHomepageLinks').addEventListener('click',loadHomepageLinkSettings);
 /* Navigation bootstrapped early and delegated, so every button works even if another script fails later. */
 (function(){
   const content=document.querySelector('.content');
-  const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings'];
+  const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings','homepage-links'];
   const origins={};
   pageIds.forEach(id=>{
     const el=document.getElementById(id);
@@ -253,6 +282,8 @@ window.__loadAdmissions=loadAdmissions;
     if(!home&&id==='admissions'&&typeof window.__loadAdmissions==='function')window.__loadAdmissions();
   };
   document.addEventListener('click',function(e){
+    const outbound=e.target.closest('[data-outbound]');
+    if(outbound){if(outbound.hidden||outbound.style.display==='none'){e.preventDefault();return;}return;}
     const target=e.target.closest('[data-target]');
     if(target){e.preventDefault();window.__academyGoPage(target.dataset.target);return;}
     const nav=e.target.closest('.nav a');
@@ -270,7 +301,7 @@ $('#logoutBtn').onclick=async()=>{try{await api('/api/logout',{method:'POST',bod
 $('#refreshBtn').onclick=()=>{loadNotices();loadPeople('teachers');loadPeople('students');toast('তথ্য রিফ্রেশ করা হচ্ছে')};
 function tick(){const d=new Date();$('#clock').textContent=d.toLocaleTimeString('bn-BD',{timeZone:'Asia/Dhaka',hour:'2-digit',minute:'2-digit',second:'2-digit'});$('#todayDate').textContent=d.toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}tick();setInterval(tick,1000);
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();$('#loginError').textContent='';try{await api('/api/login',{method:'POST',body:JSON.stringify({password:$('#loginPassword').value})});$('#loginGate').classList.add('hidden');await startAdmin()}catch(err){$('#loginError').textContent=err.message}});
-async function startAdmin(){try{await api('/api/session');$('#loginGate').classList.add('hidden');$('#serverLabel').textContent='সার্ভার সংযুক্ত';$('#connectionStatus').textContent='সার্ভার সংযোগ: সক্রিয়';await Promise.all([loadNotices(),loadPeople('teachers'),loadPeople('students'),loadAdmissions(),loadTickerLabelSetting(),loadBannerSettings()])}catch(e){$('#loginGate').classList.remove('hidden');$('#serverLabel').textContent='লগইন প্রয়োজন';$('#connectionStatus').textContent='লগইন করুন।';}}
+async function startAdmin(){try{await api('/api/session');$('#loginGate').classList.add('hidden');$('#serverLabel').textContent='সার্ভার সংযুক্ত';$('#connectionStatus').textContent='সার্ভার সংযোগ: সক্রিয়';await Promise.all([loadNotices(),loadPeople('teachers'),loadPeople('students'),loadAdmissions(),loadTickerLabelSetting(),loadBannerSettings(),loadHomepageLinkSettings()])}catch(e){$('#loginGate').classList.remove('hidden');$('#serverLabel').textContent='লগইন প্রয়োজন';$('#connectionStatus').textContent='লগইন করুন।';}}
 startAdmin();
 const sections=['home','teachers','students','notices'];const links=[...document.querySelectorAll('.mobileNav a')];const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id))}),{rootMargin:'-20% 0px -65% 0px'});sections.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el)});
 </script></body></html>
