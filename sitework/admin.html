@@ -95,7 +95,7 @@
     <button class="quick" data-target="students" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">🎓</span><span><b>শিক্ষার্থী ব্যবস্থাপনা</b><small>তথ্য, শ্রেণি ও ছবি</small></span></button>
     <button class="quick" data-target="admissions" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5"><span class="qIcon">📝</span><span><b>ভর্তি ব্যবস্থাপনা</b><small>ভর্তি সংক্রান্ত তথ্য</small></span></button>
     <button class="quick" data-target="notices" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e8"><span class="qIcon">📢</span><span><b>নোটিশ বোর্ড</b><small>নোটিশ প্রকাশ ও মুছুন</small></span></button>
-    <button class="quick" data-target="admissions" style="--c:#d9273d;--bg:#fff2f3;--border:#f7d6db"><span class="qIcon">🧑‍🤝‍🧑</span><span><b>ভর্তি ব্যবস্থাপনা</b><small>ভর্তি আবেদন দেখুন</small></span></button>
+    <button class="quick" data-target="ticker-settings" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e5"><span class="qIcon">🔴</span><span><b>শিরোনাম সেটিংস</b><small>হোমপেজের লাল শিরোনাম পরিবর্তন</small></span></button>
     <button class="quick" data-target="banner-settings" style="--c:#0b7e70;--bg:#effbf8;--border:#cdeee5"><span class="qIcon">🖼️</span><span><b>ব্যানার ব্যবস্থাপনা</b><small>হোমপেজের ব্যানার যোগ/পরিবর্তন</small></span></button>
   </div></section>
   <div class="lower">
@@ -202,11 +202,45 @@ function printAdmissionCard(id){const card=$(`[data-print-card="${id}"]`);if(!ca
   .clockFace{width:32px!important;height:32px!important;flex-basis:32px!important;font-size:21px!important}
   .clockBanner .clock{font-size:15px!important}
 }
+
+/* Button navigation uses a page view instead of scrolling down the dashboard */
+.content.page-mode{min-height:calc(100dvh - 76px);padding-top:12px!important}
+.content.page-mode>*{display:none!important}
+.content.page-mode>[data-active-page="true"]{display:block!important}
+.content.page-mode>[data-active-page="true"].section{margin-top:0!important;animation:pageFade .18s ease-out}
+.content.page-mode .pageBack{display:inline-flex;align-items:center;gap:7px;border:1px solid #cfe9df;background:#effaf5;color:#087a61;border-radius:11px;padding:9px 13px;margin:0 0 12px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.content.page-mode .pageBack:active{transform:scale(.98)}
+@keyframes pageFade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
 </style></head><body><header><h1>আংড়া মেহবাহুল উলুম নূরানী একাডেমী</h1><div>অনলাইন ভর্তি আবেদন</div></header><main class="paper">${clone.innerHTML}<div style="clear:both"></div><div class="foot">প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')} • AMUN Academy</div></main><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>`);win.document.close()}
 $('#admissionList').addEventListener('click',async e=>{const save=e.target.closest('[data-save-admission]'),del=e.target.closest('[data-del-admission]'),print=e.target.closest('[data-print-admission]');try{if(print){printAdmissionCard(print.dataset.printAdmission);return}if(save){const id=save.dataset.saveAdmission,status=$(`[data-admission-status="${id}"]`).value;await api('/api/admissions/'+id,{method:'PATCH',body:JSON.stringify({status})});toast('অবস্থা সংরক্ষিত');loadAdmissions()}else if(del&&confirm('এই আবেদন মুছবেন?')){await api('/api/admissions/'+del.dataset.delAdmission,{method:'DELETE'});loadAdmissions();toast('আবেদন মুছে ফেলা হয়েছে')}}catch(err){toast(err.message)}});
 $('#reloadAdmissions').onclick=loadAdmissions;
-document.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.target;document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});if(['admissions','attendance','results','classes','reports','backup','settings'].includes(id))toast('এই বিভাগের কার্যকর সুবিধার জন্য Worker API যুক্ত করতে হবে');setMenu(false)}));
-function setMenu(open){$('#sidebar').classList.toggle('open',open);$('#sidebarBackdrop').classList.toggle('open',open);$('#hamb').setAttribute('aria-expanded',String(open));}$('#hamb').onclick=()=>setMenu(!$('#sidebar').classList.contains('open'));$('#sidebarBackdrop').onclick=()=>setMenu(false);document.querySelectorAll('.nav a').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));a.classList.add('active');setMenu(false)}));
+const content=$('.content');
+const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings'];
+function goPage(id){
+  const home=id==='home'||!pageIds.includes(id);
+  content.classList.toggle('page-mode',!home);
+  [...content.children].forEach(el=>{el.removeAttribute('data-active-page');});
+  if(!home){
+    const target=document.getElementById(id);
+    if(target){
+      target.setAttribute('data-active-page','true');
+      let back=target.querySelector(':scope > .pageBack');
+      if(!back){back=document.createElement('button');back.type='button';back.className='pageBack';back.innerHTML='← ড্যাশবোর্ডে ফিরে যান';back.addEventListener('click',()=>goPage('home'));target.prepend(back);}
+    }
+  }
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active',(a.getAttribute('href')||'').slice(1)===(home?'home':id)));
+  setMenu(false);
+  history.replaceState(null,'',home?location.pathname+'#home':location.pathname+'#'+id);
+}
+document.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.target;goPage(id);if(['admissions'].includes(id))loadAdmissions();}));
+document.querySelectorAll('.nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goPage((a.getAttribute('href')||'#home').slice(1));}));
+document.querySelectorAll('.stat a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goPage((a.getAttribute('href')||'#home').slice(1));}));
+function setMenu(open){$('#sidebar').classList.toggle('open',open);$('#sidebarBackdrop').classList.toggle('open',open);$('#hamb').setAttribute('aria-expanded',String(open));}
+$('#hamb').onclick=()=>setMenu(!$('#sidebar').classList.contains('open'));
+$('#sidebarBackdrop').onclick=()=>setMenu(false);
+window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';if(id==='home'||pageIds.includes(id))goPage(id);});
+
+goPage((location.hash.slice(1)&&pageIds.includes(location.hash.slice(1)))?location.hash.slice(1):'home');
 $('#logoutBtn').onclick=async()=>{try{await api('/api/logout',{method:'POST',body:JSON.stringify({})});location.reload()}catch(e){toast('লগআউট endpoint কাজ করছে না: '+e.message)}};
 $('#refreshBtn').onclick=()=>{loadNotices();loadPeople('teachers');loadPeople('students');toast('তথ্য রিফ্রেশ করা হচ্ছে')};
 function tick(){const d=new Date();$('#clock').textContent=d.toLocaleTimeString('bn-BD',{timeZone:'Asia/Dhaka',hour:'2-digit',minute:'2-digit',second:'2-digit'});$('#todayDate').textContent=d.toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}tick();setInterval(tick,1000);
