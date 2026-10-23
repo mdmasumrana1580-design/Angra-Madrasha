@@ -13,8 +13,6 @@
   <link rel="canonical" href="https://angra-madrasha.masum-tv.workers.dev/">
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="app-icon-192.png">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://angra-madrasha.masum-tv.workers.dev/">
   <meta property="og:title" content="আংড়া মেছবাহুল উলুম নুরানী একাডেমী | Angra Mesbahul Ulum Nurani Academy">
@@ -55,7 +53,7 @@
 <header class="header"><div class="wrap brandrow">
   <div class="logo" aria-label="একাডেমীর লোগো"><img src="academy-logo.png" alt="আংড়া মেছবাহুল উলুম নুরানী একাডেমীর লোগো"></div>
   <div class="brand"><h1>আংড়া মেছবাহুল উলুম নুরানী একাডেমী</h1><p>আলোকিত মানুষ গড়ার প্রত্যয়ে</p></div>
-  <button class="install-fab" id="installAppBtn" type="button" aria-label="Download Apps">⬇ <span>Download.Apps</span></button>
+  <button class="install-fab" id="installAppBtn" type="button" aria-label="Install app">⬇ <span>install.apk</span></button>
   <button class="menu" id="menuBtn" aria-label="মেনু খুলুন">☰</button>
 </div>
 <nav id="nav"><div class="wrap navinner"><a href="#home">হোম</a><a href="#about">আমাদের সম্পর্কে</a><a href="#admission">অনলাইন ভর্তি</a><a href="#teachers-students">শিক্ষক/শিক্ষার্থী</a><a href="#programs">শিক্ষা কার্যক্রম</a><a href="#notice">নোটিশ বোর্ড</a><a href="#contact">যোগাযোগ</a><a class="adminlink" href="admin.html">অ্যাডমিন</a></div></nav>
@@ -90,7 +88,19 @@
 <section class="section wrap" id="about"><div class="sectionhead"><span class="eyebrow">আমাদের পরিচয়</span><h2>আংড়া মেছবাহুল উলুম নুরানী একাডেমী</h2><p><strong>আংড়া মেছবাহুল উলুম নুরানী একাডেমী</strong> একটি শিক্ষা প্রতিষ্ঠান। শিক্ষার্থীদের আধুনিক শিক্ষায় শিক্ষিত ও চরিত্রবান নাগরিক হিসেবে গড়ে তোলা আমাদের মূল লক্ষ্য। প্রতিষ্ঠানের বিস্তারিত পরিচিতি ও ইতিহাস শীঘ্রই হালনাগাদ করা হবে।</p></div></section>
 <section class="programs" id="programs"><div class="wrap"><div class="sectionhead"><span class="eyebrow">আমাদের কার্যক্রম</span><h2>শিক্ষা ও বিকাশ</h2><p></p></div><div class="featuregrid"><article class="program"><span>📘</span><h3>নূরানী শিক্ষা</h3><p>প্রতিষ্ঠানের নির্ধারিত পাঠ্যক্রম অনুযায়ী পাঠদান।</p></article><article class="program"><span>✍️</span><h3>সাধারণ শিক্ষা</h3><p>ভাষা, গণিত ও প্রয়োজনীয় মৌলিক দক্ষতার চর্চা।</p></article><article class="program"><span>🌟</span><h3>নৈতিক শিক্ষা</h3><p>শিষ্টাচার, দায়িত্ববোধ ও সুন্দর আচরণের অনুশীলন।</p></article></div></div></section>
 <section class="section wrap" id="notice"><div class="sectionhead left"><span class="eyebrow">সর্বশেষ তথ্য</span><h2>নোটিশ বোর্ড</h2><p></p></div><div id="noticeList" class="notices"><article class="notice"><span class="date">প্রতিষ্ঠানের ঘোষণা</span><h3>ওয়েবসাইটে স্বাগতম</h3><p>ভর্তি, ছুটি ও পরীক্ষার নির্ভরযোগ্য তথ্যের জন্য স্কুল অফিসের সঙ্গে যোগাযোগ করুন।</p></article></div></section>
-<section class="admission" id="admission"><div class="wrap admissionbox"><div><span class="eyebrow">ভর্তি সংক্রান্ত</span><h2>নতুন শিক্ষার্থী ভর্তির তথ্য</h2><p></p><p class="small"></p></div><form id="admissionForm"><label>অভিভাবকের নাম<input name="guardian" required placeholder="অভিভাবকের নাম"></label><label>যোগাযোগ নম্বর<input name="phone" inputmode="tel" required placeholder="মোবাইল নম্বর"></label><label>যে শ্রেণিতে ভর্তি হতে ইচ্ছুক<input name="grade" required placeholder="শ্রেণির নাম"></label><button class="btn primary" type="submit">ভর্তি আবেদন জমা দিন</button><p id="formMsg" class="formmsg" role="status"></p></form></div></section>
+<section class="admission" id="admission"><div class="wrap admissionbox"><div><span class="eyebrow">ভর্তি সংক্রান্ত</span><h2>নতুন শিক্ষার্থী ভর্তির তথ্য</h2><p></p><p class="small"></p></div><form id="admissionForm" enctype="multipart/form-data">
+<label class="admission-photo-label">শিক্ষার্থীর ছবি *<span class="photo-help">পাসপোর্ট সাইজ · JPG, PNG বা WebP · সর্বোচ্চ 3 MB</span><input id="admissionPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required><span class="admission-photo-preview" id="admissionPhotoPreview"><span>📷</span><small>ছবি নির্বাচন করলে এখানে দেখা যাবে</small></span></label>
+<label>ভর্তির বিভাগ *<select name="department" id="admissionDepartment" required><option value="নূরানি বিভাগ">নূরানি বিভাগ</option><option value="সাধারণ স্কুল বিভাগ">সাধারণ স্কুল বিভাগ</option></select></label>
+<label>শিক্ষার্থীর পূর্ণ নাম *<input name="studentName" required maxlength="120" placeholder="শিক্ষার্থীর নাম"></label>
+<label>জন্মতারিখ<input name="birthDate" type="date"></label>
+<label>লিঙ্গ<select name="gender"><option value="ছেলে">ছেলে</option><option value="মেয়ে">মেয়ে</option></select></label>
+<label>যে শ্রেণিতে ভর্তি হবে *<select name="grade" id="admissionGrade" required><option value="নূরানি">নূরানি</option></select></label>
+<label>অভিভাবকের নাম *<input name="guardian" required maxlength="120" placeholder="অভিভাবকের নাম"></label>
+<label>মোবাইল নম্বর *<input name="phone" type="tel" inputmode="tel" required maxlength="30" placeholder="01XXXXXXXXX"></label>
+<label>শিক্ষার্থীর সঙ্গে সম্পর্ক *<select name="relation" required><option value="বাবা">বাবা</option><option value="মা">মা</option><option value="বড় ভাই">বড় ভাই</option><option value="বড় বোন">বড় বোন</option><option value="দাদা">দাদা</option><option value="দাদি">দাদি</option><option value="নানা">নানা</option><option value="নানি">নানি</option><option value="চাচা">চাচা</option><option value="মামা">মামা</option><option value="অন্যান্য অভিভাবক">অন্যান্য অভিভাবক</option></select></label>
+<label>বর্তমান ঠিকানা *<textarea name="address" required maxlength="500" rows="3" placeholder="গ্রাম, ডাকঘর, উপজেলা, জেলা"></textarea></label>
+<label>আগের শিক্ষাপ্রতিষ্ঠানের নাম (ঐচ্ছিক)<input name="previousSchool" maxlength="160" placeholder="প্রতিষ্ঠানের নাম"></label>
+<button class="btn primary" type="submit">ভর্তি আবেদন জমা দিন</button><p id="formMsg" class="formmsg" role="status"></p></form></div></section>
 <section class="teachers-section" id="teachers-students"><div class="wrap teacher-content">
 <div class="directory-tabs" role="tablist" aria-label="শিক্ষক ও শিক্ষার্থী ক্যাটাগরি"><button class="directory-tab active" id="teachersTab" type="button" role="tab" aria-selected="true" aria-controls="teachersPanel">👩‍🏫 শিক্ষকবৃন্দ</button><button class="directory-tab" id="studentsTab" type="button" role="tab" aria-selected="false" aria-controls="studentsPanel">🎓 শিক্ষার্থী</button></div>
 <div id="teachersPanel" role="tabpanel" aria-labelledby="teachersTab"><div class="teacher-toolbar"><span class="teacher-count">👥 সর্বমোট শিক্ষক: <strong id="teacherCount">০</strong> জন</span><label class="teacher-search"><input id="teacherSearch" type="search" placeholder="নাম, পদবি বা বিষয় দিয়ে খুঁজুন..." aria-label="শিক্ষক খুঁজুন"><button type="button" aria-label="খুঁজুন">⌕</button></label></div><div class="teacher-grid" id="teacherGrid" aria-live="polite"></div><p class="teacher-empty" id="teacherEmpty">শিক্ষকের তথ্য লোড হচ্ছে...</p></div>

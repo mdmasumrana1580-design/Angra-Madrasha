@@ -231,22 +231,55 @@
     }
   }
 
-  // Admission form: store submissions in the Cloudflare D1-backed Worker API.
+  // Admission form: validate, preview and submit the student photo with admission details.
   const admissionForm = $('admissionForm') || $('admission-form');
   if (admissionForm) {
+    const photoInput = $('admissionPhoto');
+    const photoPreview = $('admissionPhotoPreview');
+    const department = $('admissionDepartment');
+    const gradeSelect = $('admissionGrade');
+    const grades = { 'নূরানি বিভাগ': ['নূরানি'], 'সাধারণ স্কুল বিভাগ': ['নার্সারি','কেজি','প্রথম শ্রেণি','দ্বিতীয় শ্রেণি','তৃতীয় শ্রেণি','চতুর্থ শ্রেণি','পঞ্চম শ্রেণি'] };
+    function updateAdmissionGrades() {
+      if (!department || !gradeSelect) return;
+      const options = grades[department.value] || grades['নূরানি বিভাগ'];
+      gradeSelect.innerHTML = options.map((g) => `<option value="${g}">${g}</option>`).join('');
+    }
+    if (department) department.addEventListener('change', updateAdmissionGrades);
+    if (photoInput && photoPreview) photoInput.addEventListener('change', () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) { photoPreview.innerHTML = '<span>📷</span><small>ছবি নির্বাচন করলে এখানে দেখা যাবে</small>'; return; }
+      if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 3 * 1024 * 1024) {
+        photoInput.value = ''; photoPreview.innerHTML = '<span>⚠️</span><small>JPG, PNG বা WebP ছবি দিন (সর্বোচ্চ ৩ MB)</small>'; return;
+      }
+      const img = document.createElement('img'); img.alt = 'শিক্ষার্থীর নির্বাচিত ছবি'; img.src = URL.createObjectURL(file);
+      photoPreview.replaceChildren(img);
+      const caption = document.createElement('small'); caption.textContent = file.name; photoPreview.append(caption);
+    });
     admissionForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const msg = $('formMsg') || $('admissionMsg') || $('admissionMessage') || $('formMessage');
-      const values = Object.fromEntries(new FormData(admissionForm).entries());
+      const submitButton = admissionForm.querySelector('[type="submit"]');
+      const file = photoInput && photoInput.files && photoInput.files[0];
+      if (!file) { if (msg) msg.textContent = 'শিক্ষার্থীর ছবি নির্বাচন করুন।'; return; }
+      if (submitButton) submitButton.disabled = true;
+      if (msg) msg.textContent = 'আবেদন জমা হচ্ছে, অপেক্ষা করুন…';
       try {
+        const values = Object.fromEntries(new FormData(admissionForm).entries());
+        const readerData = await new Promise((resolve, reject) => {
+          const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file);
+        });
+        values.photoData = readerData;
+        values.photoType = file.type;
+        delete values.photo;
         const response = await fetch('/api/admissions', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(values) });
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || `আবেদন জমা হয়নি (${response.status})`);
-        if (msg) msg.textContent = 'আপনার ভর্তি আবেদন সফলভাবে জমা হয়েছে। একাডেমি থেকে যোগাযোগ করা হবে।';
-        admissionForm.reset();
+        if (msg) msg.textContent = `আপনার ভর্তি আবেদন সফলভাবে জমা হয়েছে। আবেদন নম্বর: ${result.id}। একাডেমি থেকে যোগাযোগ করা হবে।`;
+        admissionForm.reset(); updateAdmissionGrades();
+        if (photoPreview) photoPreview.innerHTML = '<span>📷</span><small>ছবি নির্বাচন করলে এখানে দেখা যাবে</small>';
       } catch (error) {
         if (msg) msg.textContent = 'আবেদন জমা হয়নি: ' + error.message;
-      }
+      } finally { if (submitButton) submitButton.disabled = false; }
     });
   }
 
