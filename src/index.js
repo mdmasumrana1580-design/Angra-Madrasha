@@ -69,11 +69,11 @@ function originAllowed(request) {
   return !!origin && origin === new URL(request.url).origin;
 }
 
-async function readJson(request) {
+async function readJson(request, maxBytes = MAX_BODY) {
   const len = Number(request.headers.get('Content-Length') || 0);
-  if (len > MAX_BODY) throw new Error('অনুরোধটি অনেক বড়।');
+  if (len > maxBytes) throw new Error('অনুরোধটি অনেক বড়।');
   const text = await request.text();
-  if (text.length > MAX_BODY) throw new Error('অনুরোধটি অনেক বড়।');
+  if (text.length > maxBytes) throw new Error('অনুরোধটি অনেক বড়।');
   return JSON.parse(text);
 }
 
@@ -299,10 +299,22 @@ async function handleApi(request, env) {
   // Public admission intake; submissions are stored in D1 for admin review.
   if (method === 'POST' && path === '/api/admissions') {
     if (!originAllowed(request)) return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
-    let body; try { body = await readJson(request); } catch { return json({ error: 'সঠিক তথ্য দিন।' }, 400); }
+    let body; try { body = await readJson(request, MAX_PHOTO_SIZE * 2); } catch (err) { return json({ error: err.message || 'সঠিক তথ্য দিন।' }, 400); }
     const guardian = cleanText(body.guardian, 120), phone = cleanText(body.phone, 30), grade = cleanText(body.grade, 80), studentName = cleanText(body.studentName || body.student_name, 120);
-    if (!guardian || !phone || !grade) return json({ error: 'অভিভাবকের নাম, ফোন ও শ্রেণি আবশ্যক।' }, 400);
-    const result = await env.DB.prepare('INSERT INTO admissions(student_name,guardian,phone,grade) VALUES(?,?,?,?)').bind(studentName, guardian, phone, grade).run();
+    const department = cleanText(body.department, 80), birthDate = cleanText(body.birthDate, 20), gender = cleanText(body.gender, 20), relation = cleanText(body.relation, 60), address = cleanText(body.address, 500), previousSchool = cleanText(body.previousSchool, 160);
+    if (!guardian || !phone || !grade || !studentName || !relation || !address) return json({ error: 'শিক্ষার্থী, অভিভাবক, ফোন, সম্পর্ক, ঠিকানা ও শ্রেণির তথ্য আবশ্যক।' }, 400);
+    const photoData = String(body.photoData || '');
+    const match = photoData.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+    if (!match || match[1] !== body.photoType) return json({ error: 'শিক্ষার্থীর সঠিক ছবি নির্বাচন করুন।' }, 400);
+    let photoKey = '';
+    try {
+      const binary = atob(match[2]);
+      if (!binary.length || binary.length > MAX_PHOTO_SIZE) return json({ error: 'ছবির সাইজ ৩ MB-এর মধ্যে হতে হবে।' }, 400);
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      const file = new File([bytes], `admission.${photoExtension(match[1])}`, { type: match[1] });
+      photoKey = await storePhoto(env, file, 'admissions');
+    } catch (err) { return json({ error: err.message || 'ছবি সংরক্ষণ করা যায়নি।' }, 400); }
+    const result = await env.DB.prepare('INSERT INTO admissions(student_name,guardian,phone,grade,department,birth_date,gender,relation,address,previous_school,photo_key) VALUES(?,?,?,?,?,?,?,?,?,?,?)').bind(studentName, guardian, phone, grade, department, birthDate, gender, relation, address, previousSchool, photoKey).run();
     return json({ ok: true, id: result.meta.last_row_id }, 201);
   }
 
@@ -354,7 +366,7 @@ async function handleApi(request, env) {
 
   if (method === 'GET' && path === '/api/photos') {
     const key = url.searchParams.get('key') || '';
-    if (!/^(teachers|students)\/[a-f0-9-]+\.(jpg|png|webp)$/.test(key)) {
+    if (!/^(teachers|students|admissions)\/[a-f0-9-]+\.(jpg|png|webp)$/.test(key)) {
       return json({ error: 'ছবির ঠিকানা সঠিক নয়।' }, 400);
     }
     if (!env.PHOTOS) return json({ error: 'R2 PHOTOS binding পাওয়া যায়নি।' }, 503);
