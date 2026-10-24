@@ -12,19 +12,29 @@
   const text = (id, value) => { const el = $(id); if (el) el.textContent = value; };
 
   async function loadPublicGallery() {
-    const box = $('publicGallery'); if (!box) return;
+    const photos = $('publicPhotoGallery');
+    const videos = $('publicVideoGallery');
+    if (!photos || !videos) return;
+    const empty = (label) => `<article class="program gallery-card"><p>${label}</p></article>`;
     try {
       const response = await fetch('/api/gallery', { cache: 'no-store' });
       if (!response.ok) throw new Error('গ্যালারি লোড হয়নি');
       const items = await response.json();
-      if (!items.length) { box.innerHTML = '<article class="program"><span>📷</span><h3>শীঘ্রই ছবি ও ভিডিও আসছে</h3><p>মাদ্রাসার নতুন ছবি ও ভিডিও এখানে দেখা যাবে।</p></article>'; return; }
-      box.innerHTML = items.map(item => {
+      const photoItems = items.filter(item => item.type !== 'video' && item.type !== 'youtube');
+      const videoItems = items.filter(item => item.type === 'video' || item.type === 'youtube');
+      photos.innerHTML = photoItems.length ? photoItems.map(item => {
         const title = esc(item.title || 'মাদ্রাসার স্মৃতি');
-        if (item.type === 'youtube') return `<article class="program"><iframe src="${esc(item.youtube)}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;aspect-ratio:16/9;border:0;border-radius:14px"></iframe><h3>${title}</h3></article>`;
-        if (item.type === 'video') return `<article class="program"><video controls preload="metadata" style="width:100%;border-radius:14px" src="${esc(item.url)}"></video><h3>${title}</h3></article>`;
-        return `<article class="program"><a href="${esc(item.url)}" target="_blank" rel="noopener"><img src="${esc(item.url)}" alt="${title}" loading="lazy" style="width:100%;max-height:360px;object-fit:cover;border-radius:14px"></a><h3>${title}</h3></article>`;
-      }).join('');
-    } catch (e) { box.innerHTML = '<article class="program"><p>গ্যালারি এখন লোড করা যাচ্ছে না। পরে আবার চেষ্টা করুন।</p></article>'; }
+        return `<article class="program gallery-card"><a href="${esc(item.url)}" target="_blank" rel="noopener"><img src="${esc(item.url)}" alt="${title}" loading="lazy"></a><h3>${title}</h3></article>`;
+      }).join('') : empty('এখনো কোনো ছবি যোগ করা হয়নি।');
+      videos.innerHTML = videoItems.length ? videoItems.map(item => {
+        const title = esc(item.title || 'মাদ্রাসার ভিডিও');
+        if (item.type === 'youtube') return `<article class="program gallery-card"><iframe src="${esc(item.youtube)}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><h3>${title}</h3></article>`;
+        return `<article class="program gallery-card"><video controls preload="metadata" src="${esc(item.url)}"></video><h3>${title}</h3></article>`;
+      }).join('') : empty('এখনো কোনো ভিডিও যোগ করা হয়নি।');
+    } catch (e) {
+      photos.innerHTML = empty('ফটো গ্যালারি এখন লোড করা যাচ্ছে না।');
+      videos.innerHTML = empty('ভিডিও গ্যালারি এখন লোড করা যাচ্ছে না।');
+    }
   }
   loadPublicGallery();
 
