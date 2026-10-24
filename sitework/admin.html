@@ -131,7 +131,7 @@
     <article class="stat" style="--tone:#ef9b20;--tint:#fff0d8"><div class="statTop"><div class="statIcon">▤</div><div><label>মোট নোটিশ</label><strong id="noticeCount">—</strong></div></div><a href="#notices">বিস্তারিত দেখুন →</a></article>
     <article class="stat" style="--tone:#8d4fe0;--tint:#eee0ff"><div class="statTop"><div class="statIcon">▥</div><div><label>ভর্তি ব্যবস্থাপনা</label><strong>📝</strong></div></div><a href="#admissions">ভর্তি বিভাগ দেখুন →</a></article>
   </section>
-  <section class="panel section" id="quick"><div class="panelHead"><h3>✦ দ্রুত অ্যাকশন</h3><small>ব্যবস্থাপনা ও হোমপেজ বাটন সম্পাদনা</small></div><div class="quickGrid">
+  <section class="panel section" id="quick"><div class="panelHead"><h3>✦ দ্রুত অ্যাকশন</h3><small>এক ট্যাপে প্রয়োজনীয় কাজ</small></div><div class="quickGrid">
     <button class="quick" data-target="teachers" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">♟</span><span><b>শিক্ষক ব্যবস্থাপনা</b><small>যোগ, সম্পাদনা, মুছে ফেলা</small></span></button>
     <button class="quick" data-target="students" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">🎓</span><span><b>শিক্ষার্থী ব্যবস্থাপনা</b><small>তথ্য, শ্রেণি ও ছবি</small></span></button>
     <button class="quick" data-target="admissions" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5"><span class="qIcon">📝</span><span><b>ভর্তি ব্যবস্থাপনা</b><small>ভর্তি সংক্রান্ত তথ্য</small></span></button>
@@ -139,16 +139,15 @@
     <button class="quick" data-target="ticker-settings" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e5"><span class="qIcon">🔴</span><span><b>শিরোনাম সেটিংস</b><small>হোমপেজের লাল শিরোনাম পরিবর্তন</small></span></button>
     <button class="quick" data-target="banner-settings" style="--c:#0b7e70;--bg:#effbf8;--border:#cdeee5"><span class="qIcon">🖼️</span><span><b>ব্যানার ব্যবস্থাপনা</b><small>হোমপেজের ব্যানার যোগ/পরিবর্তন</small></span></button>
 
+  </div></section>
+  <section class="panel section" id="homepage-button-editors"><div class="panelHead"><h3>🔗 হোমপেজের ৬টি বাটন সম্পাদনা</h3><small>প্রতিটি বাটনের আলাদা এডিট পেজ</small></div><div class="quickGrid">
     <button class="quick" data-target="edit-about" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">🏫</span><span><b>আমাদের সম্পর্কে</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-programs" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">📚</span><span><b>শিক্ষা কার্যক্রম</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-contact" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5"><span class="qIcon">☎️</span><span><b>যোগাযোগ</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-facebook" style="--c:#1877f2;--bg:#eff6ff;--border:#d7e8ff"><span class="qIcon">f</span><span><b>Facebook</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-messenger" style="--c:#8a45ee;--bg:#f7f0ff;--border:#eadbff"><span class="qIcon">💬</span><span><b>Messenger</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-whatsapp" style="--c:#159b64;--bg:#effbf4;--border:#d1f0dd"><span class="qIcon">☏</span><span><b>WhatsApp</b><small>লিংক সম্পাদনা</small></span></button>
-  
-
   </div></section>
-  
   <div class="lower">
     <section class="panel section" id="notices"><div class="panelHead"><h3>📢 সাম্প্রতিক নোটিশ</h3><button class="btn light" id="reloadNotices">রিফ্রেশ ↻</button></div>
       <form id="noticeForm"><div class="field"><label for="noticeTitle">নোটিশের শিরোনাম</label><input id="noticeTitle" required maxlength="150" placeholder="যেমন: পরীক্ষার রুটিন প্রকাশ"></div><div class="field"><label for="noticeBody">নোটিশের বিস্তারিত</label><textarea id="noticeBody" rows="3" required placeholder="নোটিশের বিস্তারিত লিখুন"></textarea></div><div class="actions"><button class="btn" type="submit">＋ নোটিশ প্রকাশ</button></div></form><div id="noticeList"></div>
@@ -259,7 +258,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     if(backdrop)backdrop.classList.toggle('open',open);
     if(trigger)trigger.setAttribute('aria-expanded',String(open));
   }
-  window.__academyGoPage=function(id){
+  window.__academyGoPage=function(id,fromHistory){
     const home=id==='home'||!pageIds.includes(id);
     if(active){restore(active);active=null;}
     content.classList.toggle('page-mode',!home);
@@ -280,7 +279,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     }
     document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active',(a.getAttribute('href')||'').slice(1)===(home?'home':id)));
     menu(false);
-    try{history.replaceState(null,'',location.pathname+(home?'#home':'#'+id));}catch(e){}
+    try{if(!fromHistory){const nextUrl=location.pathname+(home?'#home':'#'+id);if(location.hash!==(home?'#home':'#'+id))history.pushState({academyPage:home?'home':id},'',nextUrl);}}catch(e){}
     window.scrollTo(0,0);
     if(!home&&id==='admissions'&&typeof window.__loadAdmissions==='function')window.__loadAdmissions();
   };
@@ -296,7 +295,8 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     if(e.target.closest('#hamb')){e.preventDefault();menu(!document.getElementById('sidebar')?.classList.contains('open'));return;}
     if(e.target.closest('#sidebarBackdrop')){menu(false);return;}
   },true);
-  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home');});
+  window.addEventListener('popstate',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home',true);});
+  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home',true);});
   const initial=location.hash.slice(1);
   window.__academyGoPage(pageIds.includes(initial)?initial:'home');
 })();
