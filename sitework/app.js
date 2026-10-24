@@ -201,6 +201,9 @@
       const tickerText = $('tickerText');
       if (tickerText) tickerText.textContent = String(settings.ticker_text || 'এখানে শিরোনামের লেখা প্রদর্শিত হবে।').slice(0, 3000);
       if (track) track.classList.add('has-notice');
+      const textBindings={about_eyebrow:'aboutEyebrow',about_title:'aboutTitle',about_body:'aboutBody',programs_eyebrow:'programsEyebrow',programs_title:'programsTitle',program_1_title:'program1Title',program_1_body:'program1Body',program_2_title:'program2Title',program_2_body:'program2Body',program_3_title:'program3Title',program_3_body:'program3Body',contact_eyebrow:'contactEyebrow',contact_title:'contactTitle',contact_body:'contactBody',contact_address:'contactAddress',contact_hours:'contactHours'};
+      Object.entries(textBindings).forEach(([key,id])=>{const el=$(id);if(el&&settings[key])el.textContent=String(settings[key]).slice(0,3000)});
+      const phoneEl=$('contactPhone');if(phoneEl&&settings.contact_phone){phoneEl.textContent=String(settings.contact_phone).slice(0,100);const digits=String(settings.contact_phone).replace(/[^+0-9]/g,'');phoneEl.href='tel:'+digits;}
       const linkDefs=[
         ['about_button_url','about_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#about'],
         ['programs_button_url','programs_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#programs'],
