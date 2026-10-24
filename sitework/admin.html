@@ -139,9 +139,8 @@
     <button class="quick" data-target="ticker-settings" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e5"><span class="qIcon">🔴</span><span><b>শিরোনাম সেটিংস</b><small>হোমপেজের লাল শিরোনাম পরিবর্তন</small></span></button>
     <button class="quick" data-target="banner-settings" style="--c:#0b7e70;--bg:#effbf8;--border:#cdeee5"><span class="qIcon">🖼️</span><span><b>ব্যানার ব্যবস্থাপনা</b><small>হোমপেজের ব্যানার যোগ/পরিবর্তন</small></span></button>
 
-  </div></section>
-  <section class="panel section" id="homepage-button-editors"><div class="panelHead"><h3>🔗 হোমপেজের ৬টি বাটন সম্পাদনা</h3><small>প্রতিটি বাটনের আলাদা এডিট পেজ</small></div><div class="quickGrid">
-    <button class="quick" data-target="edit-about" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">🏫</span><span><b>আমাদের সম্পর্কে</b><small>লিংক সম্পাদনা</small></span></button>
+    <button class=
+"quick" data-target="edit-about" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">🏫</span><span><b>আমাদের সম্পর্কে</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-programs" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">📚</span><span><b>শিক্ষা কার্যক্রম</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-contact" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5"><span class="qIcon">☎️</span><span><b>যোগাযোগ</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-facebook" style="--c:#1877f2;--bg:#eff6ff;--border:#d7e8ff"><span class="qIcon">f</span><span><b>Facebook</b><small>লিংক সম্পাদনা</small></span></button>
@@ -235,7 +234,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
 /* Navigation bootstrapped early and delegated, so every button works even if another script fails later. */
 (function(){
   const content=document.querySelector('.content');
-  const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings','homepage-button-editors','edit-about','edit-programs','edit-contact','edit-facebook','edit-messenger','edit-whatsapp'];
+  const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings','edit-about','edit-programs','edit-contact','edit-facebook','edit-messenger','edit-whatsapp'];
   const origins={};
   pageIds.forEach(id=>{
     const el=document.getElementById(id);
@@ -258,7 +257,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     if(backdrop)backdrop.classList.toggle('open',open);
     if(trigger)trigger.setAttribute('aria-expanded',String(open));
   }
-  window.__academyGoPage=function(id,fromHistory){
+  window.__academyGoPage=function(id){
     const home=id==='home'||!pageIds.includes(id);
     if(active){restore(active);active=null;}
     content.classList.toggle('page-mode',!home);
@@ -279,7 +278,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     }
     document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active',(a.getAttribute('href')||'').slice(1)===(home?'home':id)));
     menu(false);
-    try{if(!fromHistory){const nextUrl=location.pathname+(home?'#home':'#'+id);if(location.hash!==(home?'#home':'#'+id))history.pushState({academyPage:home?'home':id},'',nextUrl);}}catch(e){}
+    try{history.replaceState(null,'',location.pathname+(home?'#home':'#'+id));}catch(e){}
     window.scrollTo(0,0);
     if(!home&&id==='admissions'&&typeof window.__loadAdmissions==='function')window.__loadAdmissions();
   };
@@ -295,8 +294,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     if(e.target.closest('#hamb')){e.preventDefault();menu(!document.getElementById('sidebar')?.classList.contains('open'));return;}
     if(e.target.closest('#sidebarBackdrop')){menu(false);return;}
   },true);
-  window.addEventListener('popstate',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home',true);});
-  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home',true);});
+  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home');});
   const initial=location.hash.slice(1);
   window.__academyGoPage(pageIds.includes(initial)?initial:'home');
 })();
