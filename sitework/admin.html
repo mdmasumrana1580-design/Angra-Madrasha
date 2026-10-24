@@ -67,6 +67,13 @@
 .content:not(.page-mode)>.lower,
 .content:not(.page-mode)>#ticker-settings,
 .content:not(.page-mode)>#banner-settings,
+.content:not(.page-mode)>#media-gallery,
+.content:not(.page-mode)>#edit-about,
+.content:not(.page-mode)>#edit-programs,
+.content:not(.page-mode)>#edit-contact,
+.content:not(.page-mode)>#edit-facebook,
+.content:not(.page-mode)>#edit-messenger,
+.content:not(.page-mode)>#edit-whatsapp,
 .content:not(.page-mode)>#homepage-links,
 .content:not(.page-mode)>#teachers,
 .content:not(.page-mode)>#students,
@@ -101,7 +108,7 @@
  .sidebar.open{transform:translateX(0)!important}.sidebarBackdrop.open{display:block!important}
 }
 @media(max-width:380px){.quickGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important}.quick{min-height:66px!important;padding:6px 2px!important}.quick .qIcon{width:26px!important;height:26px!important;flex-basis:26px!important;font-size:13px!important}.quick b{font-size:8px!important}}
-.toggleLine{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);margin:8px 0}.toggleLine input{width:18px;height:18px;accent-color:#087a61}.content:not(.page-mode)>#homepage-button-editors{display:block!important}.content:not(.page-mode)>#edit-about,.content:not(.page-mode)>#edit-programs,.content:not(.page-mode)>#edit-contact,.content:not(.page-mode)>#edit-facebook,.content:not(.page-mode)>#edit-messenger,.content:not(.page-mode)>#edit-whatsapp{display:none!important}.content.page-mode>[data-active-page="true"]{display:block!important}
+.toggleLine{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);margin:8px 0}.toggleLine input{width:18px;height:18px;accent-color:#087a61}.content:not(.page-mode)>#edit-about,.content:not(.page-mode)>#edit-programs,.content:not(.page-mode)>#edit-contact,.content:not(.page-mode)>#edit-facebook,.content:not(.page-mode)>#edit-messenger,.content:not(.page-mode)>#edit-whatsapp{display:none!important}.content.page-mode>[data-active-page="true"]{display:block!important}
 </style></head>
 <body>
 <div id="loginGate" class="loginGate"><form id="loginForm" class="loginCard"><div class="logo" style="margin:0 0 14px;color:#087a61">🕌</div><h2>অ্যাডমিন লগইন</h2><p>আংড়া মেছবাহুল উলুম নুরানী একাডেমী<br>অ্যাডমিন প্যানেলে প্রবেশ করতে পাসওয়ার্ড দিন।</p><label for="loginPassword">পাসওয়ার্ড</label><input id="loginPassword" type="password" autocomplete="current-password" required><div id="loginError" class="loginError" role="alert"></div><button class="btn" type="submit">নিরাপদে লগইন করুন</button></form></div>
@@ -116,7 +123,7 @@
     <a href="#notices"><span class="ic">📢</span>নোটিশ বোর্ড</a>
     <a href="#ticker-settings"><span class="ic">🔴</span>শিরোনাম সেটিংস</a>
     <a href="#banner-settings"><span class="ic">🖼️</span>ব্যানার ব্যবস্থাপনা</a>
-    <a href="#homepage-button-editors"><span class="ic">🔗</span>হোমপেজ বাটন সম্পাদনা</a>
+    <a href="#quick"><span class="ic">✦</span>দ্রুত অ্যাকশন</a>
   </nav>
   <div class="sidebarBottom"><button class="logout" id="logoutBtn">↪ লগআউট</button><div class="sideQuote">“শিক্ষাই আমাদের শক্তি<br>আদর্শ আমাদের পথ”</div></div>
 </aside>
@@ -139,10 +146,8 @@
     <button class="quick" data-target="ticker-settings" style="--c:#e84b82;--bg:#fff3f8;--border:#f6d9e5"><span class="qIcon">🔴</span><span><b>শিরোনাম সেটিংস</b><small>হোমপেজের লাল শিরোনাম পরিবর্তন</small></span></button>
     <button class="quick" data-target="banner-settings" style="--c:#0b7e70;--bg:#effbf8;--border:#cdeee5"><span class="qIcon">🖼️</span><span><b>ব্যানার ব্যবস্থাপনা</b><small>হোমপেজের ব্যানার যোগ/পরিবর্তন</small></span></button>
 
-  </div></section>
-  <section class="panel section" id="homepage-button-editors"><div class="panelHead"><h3>🔗 হোমপেজের ৬টি বাটন সম্পাদনা</h3><small>প্রতিটি বাটনের আলাদা এডিট পেজ</small></div><div class="quickGrid">
-    <button class="quick" data-target="edit-about" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">🏫</span><span><b>আমাদের সম্পর্কে</b><small>লিংক সম্পাদনা</small></span></button>
-    <button class="quick" data-target="media-gallery" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">📸</span><span><b>ফটো ও ভিডিও</b><small>গ্যালারি ব্যবস্থাপনা</small></span></button>
+    <button class="quick" data-target="edit-about" style="--c:#0b9b76;--bg:#effbf6;--border:#c5eee0"><span class="qIcon">🏫</span><span><b>আমাদের সম্পর্কে</b><small>তথ্য সম্পাদনা</small></span></button>
+    <button class="quick" data-target="media-gallery" style="--c:#2588e8;--bg:#f0f7ff;--border:#d2e7ff"><span class="qIcon">📸</span><span><b>ফটো ও ভিডিও</b><small>ছবি ও ভিডিও যোগ করুন</small></span></button>
     <button class="quick" data-target="edit-contact" style="--c:#ee9b20;--bg:#fff9ef;--border:#f8e5c5"><span class="qIcon">☎️</span><span><b>যোগাযোগ</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-facebook" style="--c:#1877f2;--bg:#eff6ff;--border:#d7e8ff"><span class="qIcon">f</span><span><b>Facebook</b><small>লিংক সম্পাদনা</small></span></button>
     <button class="quick" data-target="edit-messenger" style="--c:#8a45ee;--bg:#f7f0ff;--border:#eadbff"><span class="qIcon">💬</span><span><b>Messenger</b><small>লিংক সম্পাদনা</small></span></button>
@@ -222,7 +227,7 @@ async function loadPeople(kind){const teacher=kind==='teachers',el=$(teacher?'#t
 personForm($('#teacherForm'),'teachers');personForm($('#studentForm'),'students');
 async function loadAdmissions(){const el=$('#admissionList');try{const a=await api('/api/admissions');el.innerHTML=a.length?a.map(x=>`<article class="notice" data-print-card="${x.id}">${x.photo_key?`<p><img src="/api/photos?key=${encodeURIComponent(x.photo_key)}" alt="শিক্ষার্থীর ছবি" style="width:90px;height:110px;object-fit:cover;border-radius:10px;border:1px solid #c7e1d5"></p>`:''}<div class="noticeTitle">${esc(x.student_name||'শিক্ষার্থী উল্লেখ নেই')} — ${esc(x.grade)}</div><p>বিভাগ: ${esc(x.department||'—')} • জন্মতারিখ: ${esc(x.birth_date||'—')} • লিঙ্গ: ${esc(x.gender||'—')}</p><p>অভিভাবক: ${esc(x.guardian)} • ফোন: ${esc(x.phone)} • সম্পর্ক: ${esc(x.relation||'—')}</p><p>ঠিকানা: ${esc(x.address||'—')} • আগের প্রতিষ্ঠান: ${esc(x.previous_school||'—')}</p><p>অবস্থা: <b>${esc(x.status)}</b> • ${dateFmt(x.created_at)}</p><div class="actions"><select data-admission-status="${x.id}"><option ${x.status==='নতুন'?'selected':''}>নতুন</option><option ${x.status==='যোগাযোগ হয়েছে'?'selected':''}>যোগাযোগ হয়েছে</option><option ${x.status==='ভর্তি সম্পন্ন'?'selected':''}>ভর্তি সম্পন্ন</option><option ${x.status==='বাতিল'?'selected':''}>বাতিল</option></select><button class="btn" data-save-admission="${x.id}">অবস্থা সংরক্ষণ</button><button class="btn light" data-print-admission="${x.id}">🖨️ প্রিন্ট / PDF</button><button class="btn red" data-del-admission="${x.id}">মুছুন</button></div></article>`).join(''):'<div class="status">এখনো কোনো ভর্তি আবেদন জমা হয়নি।</div>'}catch(e){el.innerHTML=`<div class="status">ভর্তি আবেদন লোড হয়নি: ${esc(e.message)}</div>`}}
 function printAdmissionCard(id){const card=$(`[data-print-card="${id}"]`);if(!card){toast('আবেদনটি পাওয়া যায়নি');return}const photo=card.querySelector('img');const clone=card.cloneNode(true);clone.querySelectorAll('.actions,button,select').forEach(n=>n.remove());const win=window.open('','_blank','width=850,height=700');if(!win){toast('প্রিন্ট খুলতে ব্রাউজারের pop-up অনুমতি দিন');return}win.document.write(`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ভর্তি আবেদন - AMUN Academy</title><style>body{font-family:Arial,'Noto Sans Bengali',sans-serif;color:#173d35;margin:28px;line-height:1.65}header{text-align:center;border-bottom:3px solid #08765d;padding-bottom:14px;margin-bottom:22px}h1{color:#07594d;font-size:24px;margin:0}h2{font-size:19px;margin:10px 0}p{margin:7px 0;overflow-wrap:anywhere}.paper{border:1px solid #cfe4da;border-radius:12px;padding:20px}.photo{width:100px;height:120px;object-fit:cover;border:1px solid #cfe4da;border-radius:8px;float:right;margin:0 0 12px 18px}.actions,button,select{display:none!important}.foot{margin-top:28px;border-top:1px solid #cfe4da;padding-top:12px;font-size:12px;color:#607a71}@media print{body{margin:12mm}.paper{break-inside:avoid}}
-.toggleLine{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);margin:8px 0}.toggleLine input{width:18px;height:18px;accent-color:#087a61}.content:not(.page-mode)>#homepage-button-editors{display:block!important}.content:not(.page-mode)>#edit-about,.content:not(.page-mode)>#edit-programs,.content:not(.page-mode)>#edit-contact,.content:not(.page-mode)>#edit-facebook,.content:not(.page-mode)>#edit-messenger,.content:not(.page-mode)>#edit-whatsapp{display:none!important}.content.page-mode>[data-active-page="true"]{display:block!important}
+.toggleLine{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);margin:8px 0}.toggleLine input{width:18px;height:18px;accent-color:#087a61}.content:not(.page-mode)>#edit-about,.content:not(.page-mode)>#edit-programs,.content:not(.page-mode)>#edit-contact,.content:not(.page-mode)>#edit-facebook,.content:not(.page-mode)>#edit-messenger,.content:not(.page-mode)>#edit-whatsapp{display:none!important}.content.page-mode>[data-active-page="true"]{display:block!important}
 </style></head><body><header><h1>আংড়া মেহবাহুল উলুম নূরানী একাডেমী</h1><div>অনলাইন ভর্তি আবেদন</div></header><main class="paper">${clone.innerHTML}<div style="clear:both"></div><div class="foot">প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')} • AMUN Academy</div></main><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>`);win.document.close()}
 $('#admissionList').addEventListener('click',async e=>{const save=e.target.closest('[data-save-admission]'),del=e.target.closest('[data-del-admission]'),print=e.target.closest('[data-print-admission]');try{if(print){printAdmissionCard(print.dataset.printAdmission);return}if(save){const id=save.dataset.saveAdmission,status=$(`[data-admission-status="${id}"]`).value;await api('/api/admissions/'+id,{method:'PATCH',body:JSON.stringify({status})});toast('অবস্থা সংরক্ষিত');loadAdmissions()}else if(del&&confirm('এই আবেদন মুছবেন?')){await api('/api/admissions/'+del.dataset.delAdmission,{method:'DELETE'});loadAdmissions();toast('আবেদন মুছে ফেলা হয়েছে')}}catch(err){toast(err.message)}});
 $('#reloadAdmissions').onclick=loadAdmissions;
@@ -242,7 +247,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
 /* Navigation bootstrapped early and delegated, so every button works even if another script fails later. */
 (function(){
   const content=document.querySelector('.content');
-  const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings','media-gallery','homepage-button-editors','edit-about','edit-programs','edit-contact','edit-facebook','edit-messenger','edit-whatsapp'];
+  const pageIds=['teachers','students','admissions','notices','ticker-settings','banner-settings','media-gallery','edit-about','edit-programs','edit-contact','edit-facebook','edit-messenger','edit-whatsapp'];
   const origins={};
   pageIds.forEach(id=>{
     const el=document.getElementById(id);
@@ -265,7 +270,7 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     if(backdrop)backdrop.classList.toggle('open',open);
     if(trigger)trigger.setAttribute('aria-expanded',String(open));
   }
-  window.__academyGoPage=function(id){
+  window.__academyGoPage=function(id,options={}){
     const home=id==='home'||!pageIds.includes(id);
     if(active){restore(active);active=null;}
     content.classList.toggle('page-mode',!home);
@@ -279,16 +284,17 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
       if(!back){
         back=document.createElement('button');
         back.type='button';back.className='pageBack';back.textContent='← ড্যাশবোর্ডে ফিরে যান';
-        back.addEventListener('click',()=>window.__academyGoPage('home'));
+        back.addEventListener('click',()=>window.__academyGoPage('home',{replace:true}));
         target.prepend(back);
       }
       active=id;
     }
     document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active',(a.getAttribute('href')||'').slice(1)===(home?'home':id)));
     menu(false);
-    try{history.replaceState(null,'',location.pathname+(home?'#home':'#'+id));}catch(e){}
+    try{const url=location.pathname+(home?'#home':'#'+id);if(options.fromPop){if(location.hash!==(home?'#home':'#'+id))history.replaceState({adminPage:home?'home':id},'',url);}else if(options.replace){history.replaceState({adminPage:home?'home':id},'',url);}else if(location.hash!==(home?'#home':'#'+id)){history.pushState({adminPage:home?'home':id},'',url);}else{history.replaceState({adminPage:home?'home':id},'',url);}}catch(e){}
     window.scrollTo(0,0);
     if(!home&&id==='admissions'&&typeof window.__loadAdmissions==='function')window.__loadAdmissions();
+    if(!home&&id==='media-gallery'&&typeof window.__loadGalleryAdmin==='function')window.__loadGalleryAdmin();
   };
   document.addEventListener('click',function(e){
     const outbound=e.target.closest('[data-outbound]');
@@ -302,13 +308,15 @@ document.querySelectorAll('[data-reload-link]').forEach(b=>b.addEventListener('c
     if(e.target.closest('#hamb')){e.preventDefault();menu(!document.getElementById('sidebar')?.classList.contains('open'));return;}
     if(e.target.closest('#sidebarBackdrop')){menu(false);return;}
   },true);
-  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home');});
+  window.addEventListener('popstate',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home',{fromPop:true});});
+  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1)||'home';window.__academyGoPage(pageIds.includes(id)?id:'home',{fromPop:true});});
   const initial=location.hash.slice(1);
-  window.__academyGoPage(pageIds.includes(initial)?initial:'home');
+  window.__academyGoPage(pageIds.includes(initial)?initial:'home',{replace:true});
 })();
 async function loadGalleryAdmin(){const el=$('#galleryAdminList');if(!el)return;try{const arr=await api('/api/gallery');el.className='';el.innerHTML=arr.length?arr.map(x=>`<article class="notice"><div class="noticeTitle">${esc(x.title||'মাদ্রাসার স্মৃতি')}</div>${x.type==='youtube'?`<p>YouTube ভিডিও</p>`:x.type==='video'?`<video controls preload="metadata" src="${esc(x.url)}" style="width:100%;max-width:360px;border-radius:10px"></video>`:`<img src="${esc(x.url)}" alt="${esc(x.title)}" style="width:100%;max-width:360px;max-height:220px;object-fit:cover;border-radius:10px">`}<div class="actions"><button class="btn red" type="button" data-delete-gallery="${esc(x.key.split('/').pop())}">মুছুন</button></div></article>`).join(''):'<div class="status">এখনো কোনো ছবি বা ভিডিও যোগ করা হয়নি।</div>'}catch(e){el.innerHTML=`<div class="status">গ্যালারি লোড হয়নি: ${esc(e.message)}</div>`}}
 $('#galleryForm').addEventListener('submit',async e=>{e.preventDefault();const file=$('#galleryFile').files[0],youtube=$('#galleryYoutube').value.trim();if(!file&&!youtube){toast('একটি ছবি/ভিডিও ফাইল অথবা YouTube লিংক দিন।');return}if(file&&youtube){toast('ফাইল অথবা YouTube লিংক—একটি পদ্ধতি বেছে নিন।');return}const fd=new FormData();fd.append('title',$('#galleryTitle').value.trim());if(file)fd.append('file',file);if(youtube)fd.append('youtube',youtube);try{await api('/api/gallery',{method:'POST',body:fd});e.target.reset();toast('গ্যালারিতে যোগ হয়েছে');await loadGalleryAdmin()}catch(err){toast('যোগ করা যায়নি: '+err.message)}});
 $('#galleryAdminList').addEventListener('click',async e=>{const b=e.target.closest('[data-delete-gallery]');if(!b||!confirm('এই ছবি/ভিডিও মুছে ফেলবেন?'))return;try{await api('/api/gallery/'+encodeURIComponent(b.dataset.deleteGallery),{method:'DELETE'});toast('মুছে ফেলা হয়েছে');loadGalleryAdmin()}catch(err){toast('মুছতে সমস্যা: '+err.message)}});
+window.__loadGalleryAdmin=loadGalleryAdmin;
 $('#reloadGallery').addEventListener('click',loadGalleryAdmin);
 
 $('#logoutBtn').onclick=async()=>{try{await api('/api/logout',{method:'POST',body:JSON.stringify({})});location.reload()}catch(e){toast('লগআউট endpoint কাজ করছে না: '+e.message)}};
