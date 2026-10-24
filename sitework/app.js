@@ -11,6 +11,23 @@
   })[ch]);
   const text = (id, value) => { const el = $(id); if (el) el.textContent = value; };
 
+  async function loadPublicGallery() {
+    const box = $('publicGallery'); if (!box) return;
+    try {
+      const response = await fetch('/api/gallery', { cache: 'no-store' });
+      if (!response.ok) throw new Error('গ্যালারি লোড হয়নি');
+      const items = await response.json();
+      if (!items.length) { box.innerHTML = '<article class="program"><span>📷</span><h3>শীঘ্রই ছবি ও ভিডিও আসছে</h3><p>মাদ্রাসার নতুন ছবি ও ভিডিও এখানে দেখা যাবে।</p></article>'; return; }
+      box.innerHTML = items.map(item => {
+        const title = esc(item.title || 'মাদ্রাসার স্মৃতি');
+        if (item.type === 'youtube') return `<article class="program"><iframe src="${esc(item.youtube)}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;aspect-ratio:16/9;border:0;border-radius:14px"></iframe><h3>${title}</h3></article>`;
+        if (item.type === 'video') return `<article class="program"><video controls preload="metadata" style="width:100%;border-radius:14px" src="${esc(item.url)}"></video><h3>${title}</h3></article>`;
+        return `<article class="program"><a href="${esc(item.url)}" target="_blank" rel="noopener"><img src="${esc(item.url)}" alt="${title}" loading="lazy" style="width:100%;max-height:360px;object-fit:cover;border-radius:14px"></a><h3>${title}</h3></article>`;
+      }).join('');
+    } catch (e) { box.innerHTML = '<article class="program"><p>গ্যালারি এখন লোড করা যাচ্ছে না। পরে আবার চেষ্টা করুন।</p></article>'; }
+  }
+  loadPublicGallery();
+
   // PWA install button: Android Chrome creates the installed WebAPK from this manifest.
   let deferredInstallPrompt = null;
   const installButton = $('installAppBtn');
@@ -201,9 +218,6 @@
       const tickerText = $('tickerText');
       if (tickerText) tickerText.textContent = String(settings.ticker_text || 'এখানে শিরোনামের লেখা প্রদর্শিত হবে।').slice(0, 3000);
       if (track) track.classList.add('has-notice');
-      const textBindings={about_eyebrow:'aboutEyebrow',about_title:'aboutTitle',about_body:'aboutBody',programs_eyebrow:'programsEyebrow',programs_title:'programsTitle',program_1_title:'program1Title',program_1_body:'program1Body',program_2_title:'program2Title',program_2_body:'program2Body',program_3_title:'program3Title',program_3_body:'program3Body',contact_eyebrow:'contactEyebrow',contact_title:'contactTitle',contact_body:'contactBody',contact_address:'contactAddress',contact_hours:'contactHours'};
-      Object.entries(textBindings).forEach(([key,id])=>{const el=$(id);if(el&&settings[key])el.textContent=String(settings[key]).slice(0,3000)});
-      const phoneEl=$('contactPhone');if(phoneEl&&settings.contact_phone){phoneEl.textContent=String(settings.contact_phone).slice(0,100);const digits=String(settings.contact_phone).replace(/[^+0-9]/g,'');phoneEl.href='tel:'+digits;}
       const linkDefs=[
         ['about_button_url','about_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#about'],
         ['programs_button_url','programs_button_enabled','https://angra-madrasha.masum-tv.workers.dev/#programs'],
