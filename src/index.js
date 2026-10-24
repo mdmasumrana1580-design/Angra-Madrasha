@@ -325,7 +325,7 @@ async function handleApi(request, env) {
       if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
     }
     if (path === '/api/settings/public' && method === 'GET') {
-      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key IN ('ticker_label','ticker_text','hero_banners','about_button_url','about_button_enabled','programs_button_url','programs_button_enabled','contact_button_url','contact_button_enabled','facebook_button_url','facebook_button_enabled','messenger_button_url','messenger_button_enabled','whatsapp_button_url','whatsapp_button_enabled','about_eyebrow','about_title','about_body','programs_eyebrow','programs_title','program_1_title','program_1_body','program_2_title','program_2_body','program_3_title','program_3_body','contact_eyebrow','contact_title','contact_body','contact_address','contact_phone','contact_hours')").all();
+      const { results } = await env.DB.prepare("SELECT key,value FROM site_settings WHERE key IN ('ticker_label','ticker_text','hero_banners','about_button_url','about_button_enabled','programs_button_url','programs_button_enabled','contact_button_url','contact_button_enabled','facebook_button_url','facebook_button_enabled','messenger_button_url','messenger_button_enabled','whatsapp_button_url','whatsapp_button_enabled')").all();
       return json(Object.fromEntries(results.map(r => [r.key, r.value])));
     }
     if (path === '/api/admissions' && method === 'GET') {
@@ -362,6 +362,66 @@ async function handleApi(request, env) {
 
   if (method === 'GET' && path === '/api/students') {
     return json(await listPeople(env, 'students'));
+  }
+
+  // Public gallery listing; media files are stored in the configured R2 bucket.
+  if (path === '/api/gallery' && method === 'GET') {
+    if (!env.PHOTOS) return json({ error: 'R2 PHOTOS binding পাওয়া যায়নি।' }, 503);
+    const listed = await env.PHOTOS.list({ prefix: 'gallery/', limit: 200 });
+    const items = (listed.objects || []).map(o => ({
+      key: o.key,
+      title: o.customMetadata?.title || 'মাদ্রাসার স্মৃতি',
+      type: o.customMetadata?.type || (o.key.endsWith('.mp4') ? 'video' : 'image'),
+      youtube: o.customMetadata?.youtube || '',
+      url: `/api/gallery/file?key=${encodeURIComponent(o.key)}`,
+      uploaded: o.uploaded ? o.uploaded.toISOString() : ''
+    })).sort((a,b) => b.uploaded.localeCompare(a.uploaded));
+    return json(items);
+  }
+  if (path === '/api/gallery/file' && method === 'GET') {
+    const key = url.searchParams.get('key') || '';
+    if (!/^gallery\/[a-f0-9-]+\.(jpg|png|webp|mp4|webm)$/.test(key)) return json({ error: 'মিডিয়ার ঠিকানা সঠিক নয়।' }, 400);
+    if (!env.PHOTOS) return json({ error: 'R2 PHOTOS binding পাওয়া যায়নি।' }, 503);
+    const object = await env.PHOTOS.get(key);
+    if (!object) return json({ error: 'ফাইল পাওয়া যায়নি।' }, 404);
+    const headers = new Headers(); object.writeHttpMetadata(headers);
+    headers.set('Cache-Control', 'public, max-age=86400'); headers.set('X-Content-Type-Options','nosniff');
+    return new Response(object.body, { headers });
+  }
+  if (path === '/api/gallery' && method === 'POST') {
+    if (!originAllowed(request)) return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
+    if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
+    if (!env.PHOTOS) return json({ error: 'R2 PHOTOS binding পাওয়া যায়নি।' }, 503);
+    let form; try { form = await request.formData(); } catch { return json({ error: 'ফর্মের তথ্য পড়া যায়নি।' }, 400); }
+    const title = cleanText(form.get('title'), 120) || 'মাদ্রাসার স্মৃতি';
+    const youtube = String(form.get('youtube') || '').trim();
+    if (youtube) {
+      let u; try { u = new URL(youtube); } catch { return json({ error: 'সঠিক YouTube লিংক দিন।' }, 400); }
+      let id = '';
+      if (u.hostname === 'youtu.be') id = u.pathname.slice(1);
+      else if (['youtube.com','www.youtube.com','m.youtube.com'].includes(u.hostname)) id = u.searchParams.get('v') || (u.pathname.startsWith('/embed/') ? u.pathname.split('/')[2] : '');
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return json({ error: 'সঠিক YouTube ভিডিও লিংক দিন।' }, 400);
+      const key = `gallery/${crypto.randomUUID()}.webm`;
+      await env.PHOTOS.put(key, '', { customMetadata: { title, type: 'youtube', youtube: `https://www.youtube-nocookie.com/embed/${id}` } });
+      return json({ ok: true, key }, 201);
+    }
+    const file = form.get('file');
+    if (!file || typeof file.arrayBuffer !== 'function' || !file.size) return json({ error: 'ছবি বা ভিডিও ফাইল নির্বাচন করুন।' }, 400);
+    const type = file.type || '';
+    let ext = '', mediaType = '';
+    if (['image/jpeg','image/png','image/webp'].includes(type)) { ext = type === 'image/jpeg' ? 'jpg' : type === 'image/png' ? 'png' : 'webp'; mediaType = 'image'; if (file.size > 3*1024*1024) return json({error:'ছবির সাইজ ৩ MB-এর মধ্যে হতে হবে।'},400); }
+    else if (['video/mp4','video/webm'].includes(type)) { ext = type === 'video/mp4' ? 'mp4' : 'webm'; mediaType = 'video'; if (file.size > 20*1024*1024) return json({error:'ভিডিওর সাইজ ২০ MB-এর মধ্যে হতে হবে। বড় ভিডিও YouTube লিংক দিয়ে যোগ করুন।'},400); }
+    else return json({ error: 'ছবি JPG/PNG/WebP অথবা ভিডিও MP4/WebM হতে হবে।' }, 400);
+    const key = `gallery/${crypto.randomUUID()}.${ext}`;
+    await env.PHOTOS.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: type, cacheControl: 'public, max-age=86400' }, customMetadata: { title, type: mediaType } });
+    return json({ ok: true, key }, 201);
+  }
+  const galleryDelete = path.match(/^\/api\/gallery\/([a-f0-9-]+\.(?:jpg|png|webp|mp4|webm))$/);
+  if (galleryDelete && method === 'DELETE') {
+    if (!originAllowed(request)) return json({ error: 'নিরাপত্তার কারণে অনুরোধটি গ্রহণ করা হয়নি।' }, 403);
+    if (!await verifySession(request, env)) return json({ error: 'লগইন প্রয়োজন।' }, 401);
+    if (!env.PHOTOS) return json({ error: 'R2 PHOTOS binding পাওয়া যায়নি।' }, 503);
+    await env.PHOTOS.delete(`gallery/${galleryDelete[1]}`); return json({ ok: true });
   }
 
   if (method === 'GET' && path === '/api/photos') {
