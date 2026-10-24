@@ -371,7 +371,7 @@ async function handleApi(request, env) {
     const items = (listed.objects || []).map(o => ({
       key: o.key,
       title: o.customMetadata?.title || 'মাদ্রাসার স্মৃতি',
-      type: o.customMetadata?.type || (o.key.endsWith('.mp4') ? 'video' : 'image'),
+      type: o.customMetadata?.type || (/\.(mp4|webm)$/i.test(o.key) ? 'video' : 'image'),
       youtube: o.customMetadata?.youtube || '',
       url: `/api/gallery/file?key=${encodeURIComponent(o.key)}`,
       uploaded: o.uploaded ? o.uploaded.toISOString() : ''
@@ -398,9 +398,13 @@ async function handleApi(request, env) {
     if (youtube) {
       let u; try { u = new URL(youtube); } catch { return json({ error: 'সঠিক YouTube লিংক দিন।' }, 400); }
       let id = '';
-      if (u.hostname === 'youtu.be') id = u.pathname.slice(1);
-      else if (['youtube.com','www.youtube.com','m.youtube.com'].includes(u.hostname)) id = u.searchParams.get('v') || (u.pathname.startsWith('/embed/') ? u.pathname.split('/')[2] : '');
-      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return json({ error: 'সঠিক YouTube ভিডিও লিংক দিন।' }, 400);
+      const host = u.hostname.toLowerCase().replace(/^www\./, '');
+      if (host === 'youtu.be') id = u.pathname.split('/').filter(Boolean)[0] || '';
+      else if (['youtube.com','m.youtube.com','youtube-nocookie.com'].includes(host)) {
+        const parts = u.pathname.split('/').filter(Boolean);
+        id = u.searchParams.get('v') || (['embed','shorts','live','v'].includes(parts[0]) ? (parts[1] || '') : '');
+      }
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return json({ error: 'সঠিক YouTube ভিডিও লিংক দিন। YouTube watch, youtu.be, Shorts বা Live লিংক ব্যবহার করুন।' }, 400);
       const key = `gallery/${crypto.randomUUID()}.webm`;
       await env.PHOTOS.put(key, '', { customMetadata: { title, type: 'youtube', youtube: `https://www.youtube-nocookie.com/embed/${id}` } });
       return json({ ok: true, key }, 201);
